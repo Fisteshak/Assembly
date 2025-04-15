@@ -1,12 +1,12 @@
-package com.rtuitlab.assembly
+package com.rtuitlab.assemble
 
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import com.rtuitlab.assembly.MainStore.Intent
-import com.rtuitlab.assembly.MainStore.State
+import com.rtuitlab.assemble.MainStore.Intent
+import com.rtuitlab.assemble.MainStore.State
 
 internal interface MainStore : Store<Intent, State, Nothing> {
 

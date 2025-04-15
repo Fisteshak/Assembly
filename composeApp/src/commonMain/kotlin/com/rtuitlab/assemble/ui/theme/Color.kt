@@ -1,4 +1,4 @@
-package com.rtuitlab.assembly.ui.theme
+package com.rtuitlab.assemble.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF5A5D72)

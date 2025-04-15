@@ -15,10 +15,11 @@ compose.resources {
 }
 
 kotlin {
+    jvm("desktop")
+
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-
-
         moduleName = "composeApp"
         browser {
             val rootDirPath = project.rootDir.path
@@ -38,32 +39,51 @@ kotlin {
     }
     
     sourceSets {
+        val desktopMain by getting
 
         commonMain.dependencies {
 
-//            implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.20")
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
+          //  implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation("com.arkivanov.mvikotlin:mvikotlin:4.3.0")
-            implementation("com.arkivanov.mvikotlin:mvikotlin-main:4.3.0")
-            implementation("com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines:4.3.0")
+
+            // mvikotlin
+            implementation(libs.mvikotlin)
+            implementation(libs.mvikotlin.main)
+            implementation(libs.mvikotlin.extensions.coroutines)
 
         }
 
         wasmJsMain.dependencies {
 
-            implementation(compose.material3)
 
+        }
+
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
         }
 
 
     }
 }
 
+
+compose.desktop {
+    application {
+        mainClass = "com.rtuitlab.assemble.MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "com.rtuitlab.assemble"
+            packageVersion = "1.0.0"
+        }
+    }
+}
 

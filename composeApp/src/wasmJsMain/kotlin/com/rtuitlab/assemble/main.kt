@@ -1,4 +1,4 @@
-package com.rtuitlab.assembly
+package com.rtuitlab.assemble
 
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport

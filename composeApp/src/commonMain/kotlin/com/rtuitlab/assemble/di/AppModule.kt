@@ -1,8 +1,8 @@
-package com.rtuitlab.assembly.di
+package com.rtuitlab.assemble.di
 
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
-import com.rtuitlab.assembly.MainStore
-import com.rtuitlab.assembly.MainStoreFactory
+import com.rtuitlab.assemble.MainStore
+import com.rtuitlab.assemble.MainStoreFactory
 
 // manual DI
 // TODO следить за проблемами с жизненным циклом
