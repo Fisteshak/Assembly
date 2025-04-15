@@ -1,12 +1,12 @@
-package com.rtuitlab.assemble.ui.home
+package com.rtuitlab.assemble.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -22,16 +22,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import assembly.composeapp.generated.resources.Res
+import assembly.composeapp.generated.resources.arrow_back_icon
 import assembly.composeapp.generated.resources.assemble_icon
 import assembly.composeapp.generated.resources.contatiner_icon
 import org.jetbrains.compose.resources.painterResource
 
+
+/**
+ * Navigation Bar
+ *
+ * if onBackClick is null, back button will not be shown
+ **/
 @Composable
-fun HomeNavigationPanel(
+fun NavigationBar(
     onAssembleClick: () -> Unit,
     onContainerClick: () -> Unit,
     onQrCodeClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onBackClick: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier
@@ -42,6 +50,35 @@ fun HomeNavigationPanel(
             )
 
     ) {
+
+        if (onBackClick != null) {
+            BigSideButton(
+                modifier = Modifier.width(230.dp).padding(16.dp),
+                onClick = onBackClick,
+                backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                content = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(Res.drawable.arrow_back_icon),
+                            contentDescription = "Назад",
+                            tint = Color.Unspecified,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                        Text(
+                            text = "На главную",
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                },
+            )
+
+        }
+
         BigSideButton(
             modifier = Modifier.width(230.dp).padding(16.dp),
             onClick = onAssembleClick,

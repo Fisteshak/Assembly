@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.serialization)
 }
 
 compose.resources {
@@ -52,11 +53,14 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
           //  implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-
             // mvikotlin
             implementation(libs.mvikotlin)
             implementation(libs.mvikotlin.main)
             implementation(libs.mvikotlin.extensions.coroutines)
+            // serialization
+            implementation(libs.serialization)
+            //navigation
+            implementation(libs.navigation)
 
         }
 

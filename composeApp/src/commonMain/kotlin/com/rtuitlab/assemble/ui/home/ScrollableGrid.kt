@@ -39,13 +39,10 @@ fun <T> ScrollableGrid(
         val leftBorder = batchSize * page.value
         val rightBorder = min(items.size, batchSize * (page.value + 1))
 
-        println("Grid: leftBorder $leftBorder, rightBorder $rightBorder")
+        // println("Grid: leftBorder $leftBorder, rightBorder $rightBorder")
 
         val batch = items.slice(leftBorder..<rightBorder)
-//
-//        Grid(batch, rows, cols, modifier = Modifier) { item ->
-//            content(item)
-//        }
+
         NotLazyGrid(
             batch, rows, cols,
             content = { item ->
