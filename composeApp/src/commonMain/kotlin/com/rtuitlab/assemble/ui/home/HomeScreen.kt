@@ -47,7 +47,7 @@ fun HomeScreen(
     ) {
         Column(modifier = Modifier.width(IntrinsicSize.Min)) {
 
-            val data = createSampleAssembles(16)
+            val data = createSampleAssembles(8)
             SectionHeader(
                 "Сборки",
                 modifier = Modifier.fillMaxWidth().padding(start = 6.dp, end = 14.dp)

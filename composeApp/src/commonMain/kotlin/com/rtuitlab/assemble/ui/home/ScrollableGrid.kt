@@ -58,7 +58,7 @@ fun <T> ScrollableGrid(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            val canScrollRight = page.value < items.size / batchSize
+            val canScrollRight = rightBorder < items.size
             val canScrollLeft = page.value > 0
 
             val colorEnabled = Color(0xFFB8C4FF)

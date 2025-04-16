@@ -72,6 +72,8 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            // for previews
+            implementation("org.jetbrains.compose.ui:ui-tooling-preview-desktop:1.7.3")
         }
 
 
