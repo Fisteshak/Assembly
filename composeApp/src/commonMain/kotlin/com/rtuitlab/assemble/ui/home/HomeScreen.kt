@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
@@ -27,7 +26,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen({})
+    Text("Hello!!")
 }
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalMaterial3Api::class)
@@ -41,14 +40,14 @@ fun HomeScreen(
 
 
     Column(
-        Modifier.padding(10.dp).fillMaxSize(),
+        Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Column(modifier = Modifier.width(IntrinsicSize.Min)) {
 
-            val data = createSampleAssembles(8)
-            SectionHeader(
+            val data = createSampleAssembles(20)
+            HomeHeader(
                 "Сборки",
                 modifier = Modifier.fillMaxWidth().padding(start = 6.dp, end = 14.dp)
             )
@@ -69,11 +68,11 @@ fun HomeScreen(
 
 
 @Composable
-fun SectionHeader(title: String, modifier: Modifier = Modifier) {
+fun HomeHeader(title: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.SemiBold),
+            style = MaterialTheme.typography.displaySmall,
             modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp)
         )
         HorizontalDivider(

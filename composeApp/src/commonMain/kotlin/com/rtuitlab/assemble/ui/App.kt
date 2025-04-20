@@ -1,7 +1,6 @@
 package com.rtuitlab.assemble.ui
 
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
@@ -15,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.toRoute
 import com.rtuitlab.assemble.ui.assemble.AssembleScreen
 import com.rtuitlab.assemble.ui.home.HomeScreen
 import com.rtuitlab.assemble.ui.theme.AppTheme
@@ -41,7 +41,7 @@ fun App(navController: NavHostController) {
                 navBackStackEntry?.destination?.hasRoute(HomeScreenRoute::class) == false
             printBackStack(backStack.value)
 
-            Row(modifier = Modifier.fillMaxHeight().padding(10.dp)) {
+            Row(modifier = Modifier.fillMaxSize().padding(24.dp)) {
                 NavigationBar(
                     onAssembleClick = {
                         navController.navigate(AssembleScreenRoute(null)) {
@@ -71,7 +71,10 @@ fun App(navController: NavHostController) {
                         )
                     }
                     composable<AssembleScreenRoute> {
-                        AssembleScreen()
+                        val assembleId =
+                            navBackStackEntry?.toRoute<AssembleScreenRoute>()?.assembleId
+
+                        AssembleScreen(assembleId)
                     }
                 }
 

@@ -1,6 +1,6 @@
 package com.rtuitlab.assemble.domain.entities
 
-import com.rtuitlab.assemble.data.entities.AssembleNetworkEntity
+import com.rtuitlab.assemble.data.entities.NetworkAssemble
 
 data class Assemble(
     val assembleId: Long,
@@ -10,10 +10,10 @@ data class Assemble(
     val linkToProject: String?,
     val linkToSound: String?,
     val userId: Long,
-    val components: List<Component>
+    val components: List<AssembleComponent>
 )
 
-fun AssembleNetworkEntity.toAssemble(): Assemble {
+fun NetworkAssemble.toAssemble(): Assemble {
 
     val mappedComponents = this.components.map { networkComponent ->
         networkComponent.toComponent()

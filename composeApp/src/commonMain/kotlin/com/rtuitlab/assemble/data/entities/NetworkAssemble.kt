@@ -1,6 +1,6 @@
 package com.rtuitlab.assemble.data.entities
 
-data class AssembleNetworkEntity(
+data class NetworkAssemble(
     val assembleId: Long,
     val name: String,
     val instruction: String,
@@ -8,6 +8,6 @@ data class AssembleNetworkEntity(
     val linkToProject: String?,
     val linkToSound: String?,
     val userId: Long,
-    val components: List<ComponentNetworkEntity>
+    val components: List<NetworkAssembleComponent>
 )
 

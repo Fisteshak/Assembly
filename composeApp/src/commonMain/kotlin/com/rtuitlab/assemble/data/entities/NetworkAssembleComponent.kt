@@ -1,6 +1,6 @@
 package com.rtuitlab.assemble.data.entities
 
-data class ComponentNetworkEntity(
+data class NetworkAssembleComponent(
     val componentId: Long,
     val name: String,
     val amount: Long,

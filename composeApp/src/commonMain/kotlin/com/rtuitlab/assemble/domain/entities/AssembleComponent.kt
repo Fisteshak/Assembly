@@ -1,8 +1,8 @@
 package com.rtuitlab.assemble.domain.entities
 
-import com.rtuitlab.assemble.data.entities.ComponentNetworkEntity
+import com.rtuitlab.assemble.data.entities.NetworkAssembleComponent
 
-data class Component(
+data class AssembleComponent(
     val componentId: Long,
     val name: String,
     val amount: Long,
@@ -10,8 +10,8 @@ data class Component(
     val linkToSound: String?,
 )
 
-fun ComponentNetworkEntity.toComponent(): Component {
-    return Component(
+fun NetworkAssembleComponent.toComponent(): AssembleComponent {
+    return AssembleComponent(
         componentId = this.componentId,
         name = this.name,
         amount = this.amount,

@@ -7,5 +7,5 @@ object HomeScreenRoute
 
 @Serializable
 data class AssembleScreenRoute(
-    val assembleId: Long?
+    val assembleId: Long? = null
 )
