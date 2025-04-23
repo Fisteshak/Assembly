@@ -63,7 +63,7 @@ fun App(navController: NavHostController) {
                     composable<HomeScreenRoute> {
                         HomeScreen(
                             onAssembleClick = {
-                                println("clicked"); navController.navigate(AssembleScreenRoute(it)) {
+                                navController.navigate(AssembleScreenRoute(it)) {
                                 launchSingleTop = true
 
                             }

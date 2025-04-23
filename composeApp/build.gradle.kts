@@ -59,13 +59,20 @@ kotlin {
             implementation(libs.mvikotlin.extensions.coroutines)
             // serialization
             implementation(libs.serialization)
-            //navigation
+            // navigation
             implementation(libs.navigation)
+            // ktor
+            implementation(libs.ktor.client.core)
+            implementation("io.ktor:ktor-client-auth:3.1.2")
+            implementation("io.ktor:ktor-client-logging:3.1.2")
+            implementation("io.ktor:ktor-client-content-negotiation:3.1.2")
+            implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.2")
 
         }
 
         wasmJsMain.dependencies {
-
+            // ktor js engine
+            implementation("io.ktor:ktor-client-js:3.1.2")
 
         }
 
@@ -74,6 +81,11 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
             // for previews
             implementation("org.jetbrains.compose.ui:ui-tooling-preview-desktop:1.7.3")
+            // ktor jvm engine
+            implementation(libs.ktor.client.cio)
+            // logging
+            implementation("ch.qos.logback:logback-classic:1.5.18")
+
         }
 
 

@@ -7,6 +7,7 @@ mvikotlin = "4.3.0"
 kotlinx-coroutines = "1.10.1"
 serialization-json = "1.8.0"
 navigation-multiplatform = "2.8.0-alpha10"
+ktor = "3.1.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -20,6 +21,8 @@ mvikotlin-extensions-coroutines = { group = "com.arkivanov.mvikotlin", name = "m
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization-json" }
 navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "navigation-multiplatform" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
 
 [plugins]
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }

@@ -14,7 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rtuitlab.assemble.data.createSampleAssembles
+import androidx.compose.ui.unit.sp
+import com.rtuitlab.assemble.data.repositores.createSampleAssembles
 import com.rtuitlab.assemble.domain.entities.Assemble
 
 @Composable
@@ -48,7 +49,7 @@ fun AssembleScreen(
             },
             bottomBar = {
                 Column {
-                    AddButton({}, Modifier.padding(vertical = 28.dp))
+                    AddButton({}, Modifier.padding(vertical = 16.dp))
                     AssembleFooter({}, {}, Modifier.fillMaxWidth())
                 }
 
@@ -60,11 +61,13 @@ fun AssembleScreen(
             ) {
                 Text(
                     "Добавьте детали",
-                    modifier = Modifier.padding(vertical = 24.dp),
-                    style = MaterialTheme.typography.headlineMedium
+                    modifier = Modifier.padding(vertical = 14.dp),
+                    style = MaterialTheme.typography.titleLarge
                 )
-
-                AssembleComponentsList(assemble.components, modifier = Modifier.fillMaxWidth())
+                if (assemble.components != null)
+                    AssembleComponentsList(assemble.components, modifier = Modifier.fillMaxWidth())
+                else
+                    Text("No Data", fontSize = 20.sp)
             }
         }
     }

@@ -3,6 +3,8 @@ package com.rtuitlab.assemble.di
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.rtuitlab.assemble.MainStore
 import com.rtuitlab.assemble.MainStoreFactory
+import com.rtuitlab.assemble.data.httpClient
+import io.ktor.client.HttpClient
 
 // manual DI
 // TODO следить за проблемами с жизненным циклом
@@ -23,4 +25,14 @@ internal object AppModule {
                     println("Created MainStore")
                 }
     }
+
+    private var client: HttpClient? = null
+
+    fun getClient(): HttpClient =
+        client ?: httpClient().also {
+            client = it
+            println("Created client")
+        }
+
+
 }

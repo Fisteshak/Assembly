@@ -27,7 +27,7 @@ fun AssembleFooter(
 ) {
     Row(
         modifier = modifier
-            .requiredHeight(90.dp)
+            .requiredHeight(64.dp)
             .shadow(elevation = 2.dp, shape = RoundedCornerShape(12.dp))
             .background(
                 color = MaterialTheme.colorScheme.surfaceVariant,
@@ -40,7 +40,7 @@ fun AssembleFooter(
     ) {
         Button(
             onClick = { onSaveDraft() },
-            modifier = Modifier.width(300.dp).height(55.dp),
+            modifier = Modifier.width(300.dp).height(45.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.primary),
             shape = RoundedCornerShape(10.dp),
             elevation = null
@@ -49,13 +49,13 @@ fun AssembleFooter(
             Text(
                 "Сохранить черновик",
                 color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleMedium
             )
         }
         Spacer(Modifier.width(14.dp))
         Button(
             onClick = { onPublishAssemble() },
-            modifier = Modifier.width(300.dp).height(55.dp),
+            modifier = Modifier.width(300.dp).height(45.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.primary),
             shape = RoundedCornerShape(10.dp),
             elevation = null,
@@ -64,7 +64,7 @@ fun AssembleFooter(
             Text(
                 "Опубликовать сборку",
                 color = MaterialTheme.colorScheme.onPrimary,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleMedium
             )
         }
     }

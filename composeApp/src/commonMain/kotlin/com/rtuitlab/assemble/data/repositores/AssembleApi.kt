@@ -1,9 +1,50 @@
-package com.rtuitlab.assemble.data
+package com.rtuitlab.assemble.data.repositores
 
+import com.rtuitlab.assemble.data.entities.NetworkAssemble
+import com.rtuitlab.assemble.di.AppModule
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.request.get
+import io.ktor.client.statement.HttpResponse
 
-fun createSampleAssembles(count: Int = 15): List<Assemble> {
+
+class AssembleApi(
+    private val client: HttpClient = AppModule.getClient()
+) {
+    private val assemblies = createSampleAssembles(12)
+
+
+    suspend fun getAssembles(): List<NetworkAssemble> {
+
+        val response: HttpResponse = client.get("assemblies") {
+        }
+
+        val assemblies: List<NetworkAssemble> = response.body()
+
+        return assemblies
+    }
+
+
+    suspend fun getAssembleById(id: Long): NetworkAssemble {
+        val response = client.get("assemblies/$id") {}
+
+        val assemble: NetworkAssemble = response.body()
+
+        return assemble
+
+    }
+
+    suspend fun createAssemble(assemble: Assemble): Assemble {
+        assemblies += assemble
+        return assemble
+    }
+
+
+}
+
+fun createSampleAssembles(count: Int = 15): MutableList<Assemble> {
     val sampleAssembles = mutableListOf<Assemble>()
 
     for (i in 1..count) {

@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.rtuitlab.assemble.data.createSampleAssembles
 import com.rtuitlab.assemble.di.AppModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -37,6 +36,8 @@ fun HomeScreen(
     val store = AppModule.getMainStore()
 
     val uiState by store.stateFlow.collectAsStateWithLifecycle()
+    val assemblies = uiState.assemblies
+
 
 
     Column(
@@ -46,17 +47,19 @@ fun HomeScreen(
     ) {
         Column(modifier = Modifier.width(IntrinsicSize.Min)) {
 
-            val data = createSampleAssembles(20)
             HomeHeader(
                 "Сборки",
                 modifier = Modifier.fillMaxWidth().padding(start = 6.dp, end = 14.dp)
             )
             ScrollableGrid(
-                data,
+                assemblies,
                 rows = 2, cols = 4,
                 modifier = Modifier.padding(10.dp),
                 content = { item ->
-                    AssembleCard(item, { onAssembleClick(item.assembleId) }, modifier = Modifier)
+                    AssembleCard(item, {
+//                        store.accept(MainStore.Intent.FetchAssembleById(item.assembleId))
+                        onAssembleClick(item.assembleId)
+                    }, modifier = Modifier)
                 },
                 placeholder = {
                     PlaceholderAssembleCard()

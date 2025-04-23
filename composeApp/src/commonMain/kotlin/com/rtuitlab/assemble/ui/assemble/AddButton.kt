@@ -43,7 +43,7 @@ fun AddButton(
             Text(
                 "Добавить",
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleMedium
             )
         }
     }
