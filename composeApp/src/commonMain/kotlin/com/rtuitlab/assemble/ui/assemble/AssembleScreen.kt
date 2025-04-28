@@ -11,20 +11,29 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.rtuitlab.assemble.data.repositores.createSampleAssembles
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.rtuitlab.assemble.di.AppModule
 import com.rtuitlab.assemble.domain.entities.Assemble
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun AssembleScreen(
     assembleId: Long?,
     modifier: Modifier = Modifier
 ) {
+    val store = AppModule.getMainStore()
 
-    val assemble = createSampleAssembles(50).find { assembleId == it.assembleId } ?: Assemble(
+    val uiState by store.stateFlow.collectAsStateWithLifecycle()
+    val assemblies = uiState.assemblies
+
+    val assemble = assemblies.find { assembleId == it.assembleId } ?: Assemble(
         -1,
         "New Assemble",
         "",

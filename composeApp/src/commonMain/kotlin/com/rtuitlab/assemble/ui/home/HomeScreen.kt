@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.rtuitlab.assemble.MainStore
 import com.rtuitlab.assemble.di.AppModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -34,7 +35,6 @@ fun HomeScreen(
     onAssembleClick: (Long) -> Unit
 ) {
     val store = AppModule.getMainStore()
-
     val uiState by store.stateFlow.collectAsStateWithLifecycle()
     val assemblies = uiState.assemblies
 
@@ -57,7 +57,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(10.dp),
                 content = { item ->
                     AssembleCard(item, {
-//                        store.accept(MainStore.Intent.FetchAssembleById(item.assembleId))
+                        store.accept(MainStore.Intent.FetchAssembleById(item.assembleId))
                         onAssembleClick(item.assembleId)
                     }, modifier = Modifier)
                 },

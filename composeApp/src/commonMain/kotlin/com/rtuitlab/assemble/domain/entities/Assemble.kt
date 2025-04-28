@@ -1,6 +1,7 @@
 package com.rtuitlab.assemble.domain.entities
 
-import com.rtuitlab.assemble.data.entities.NetworkAssemble
+import com.rtuitlab.assemble.data.entities.AssembleForListOutDTO
+import com.rtuitlab.assemble.data.entities.FullAssembleDataOutDTO
 
 data class Assemble(
     val assembleId: Long,
@@ -13,14 +14,28 @@ data class Assemble(
     val components: List<AssembleComponent>?
 )
 
-fun NetworkAssemble.toAssemble(): Assemble {
+fun AssembleForListOutDTO.toAssemble(): Assemble {
 
-    val mappedComponents = this.components?.map { networkComponent ->
+    return Assemble(
+        assembleId = this.id,
+        name = this.name,
+        instruction = null,
+        amountReady = null,
+        linkToProject = null,
+        linkToSound = null,
+        userId = null,
+        components = null,
+    )
+}
+
+fun FullAssembleDataOutDTO.toAssemble(): Assemble {
+
+    val mappedComponents = this.components.map { networkComponent ->
         networkComponent.toComponent()
     }
 
     return Assemble(
-        assembleId = this.id,
+        assembleId = this.assembleId,
         name = this.name,
         instruction = this.instruction,
         amountReady = this.amountReady,

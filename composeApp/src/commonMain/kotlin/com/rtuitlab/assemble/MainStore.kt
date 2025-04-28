@@ -11,8 +11,10 @@ import com.rtuitlab.assemble.MainStore.State
 import com.rtuitlab.assemble.data.repositores.AssembleApi
 import com.rtuitlab.assemble.data.repositores.AssembliesRepository
 import com.rtuitlab.assemble.domain.entities.Assemble
+import com.rtuitlab.assemble.domain.entities.Component
 import com.rtuitlab.assemble.domain.usecases.GetAssembleByIdUseCase
 import com.rtuitlab.assemble.domain.usecases.GetAssembliesUseCase
+import com.rtuitlab.assemble.domain.usecases.GetComponentsUseCase
 import kotlinx.coroutines.launch
 
 internal interface MainStore : Store<Intent, State, Nothing> {
@@ -21,11 +23,13 @@ internal interface MainStore : Store<Intent, State, Nothing> {
         data class LogoExpanded(val value: Boolean) : Intent
         object FetchAssemblies : Intent
         data class FetchAssembleById(val id: Long) : Intent
+        object FetchComponents : Intent
     }
 
     data class State(
         val expanded: Boolean = false,
         val assemblies: MutableList<Assemble> = mutableListOf(),
+        val components: MutableList<Component> = mutableListOf(),
     )
 
     sealed interface Label {
@@ -43,7 +47,7 @@ internal class MainStoreFactory(
             name = "Store",
             initialState = State(),
             reducer = ReducerImpl,
-            bootstrapper = SimpleBootstrapper(Action.FetchAssemblies),
+            bootstrapper = SimpleBootstrapper(Action.FetchAssemblies, Action.FetchComponents),
             executorFactory = MainStoreFactory::ExecutorImpl
         ) {}
 
@@ -51,12 +55,14 @@ internal class MainStoreFactory(
 
     private sealed interface Action {
         object FetchAssemblies : Action
-
+        object FetchComponents : Action
     }
 
     private sealed interface Msg {
         data class Expanded(val value: Boolean) : Msg
         data class Assemblies(val value: MutableList<Assemble>) : Msg
+        data class UpdateAssemble(val value: Assemble) : Msg
+        data class Components(val value: MutableList<Component>) : Msg
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -67,11 +73,12 @@ internal class MainStoreFactory(
 
     private class ExecutorImpl(
         val getAssembliesUseCase: GetAssembliesUseCase = GetAssembliesUseCase(
-            AssembliesRepository(
-                AssembleApi()
-            )
+            AssembliesRepository(AssembleApi())
         ),
         val getAssembleByIdUseCase: GetAssembleByIdUseCase = GetAssembleByIdUseCase(
+            AssembliesRepository(AssembleApi())
+        ),
+        val getComponentsUseCase: GetComponentsUseCase = GetComponentsUseCase(
             AssembliesRepository(AssembleApi())
         ),
     ) : CoroutineExecutor<Intent, Action, State, Msg, Nothing>() {
@@ -81,12 +88,14 @@ internal class MainStoreFactory(
                 is Intent.LogoExpanded -> dispatch(Msg.Expanded(intent.value))
                 is Intent.FetchAssemblies -> fetchAssemblies()
                 is Intent.FetchAssembleById -> fetchAssembleById(intent.id)
+                is Intent.FetchComponents -> fetchComponents()
             }
         }
 
         override fun executeAction(action: Action) {
             when (action) {
                 Action.FetchAssemblies -> fetchAssemblies()
+                Action.FetchComponents -> fetchComponents()
             }
         }
 
@@ -97,12 +106,18 @@ internal class MainStoreFactory(
             }
         }
 
+        private fun fetchComponents() {
+            scope.launch {
+                val components = Msg.Components(getComponentsUseCase() as MutableList<Component>)
+                dispatch(components)
+            }
+        }
+
         private fun fetchAssembleById(id: Long) {
             scope.launch {
                 val assemble = getAssembleByIdUseCase(id)
-                state().assemblies[id.toInt()] = assemble
 
-                dispatch(Msg.Assemblies(state().assemblies))
+                dispatch(Msg.UpdateAssemble(assemble))
             }
         }
 
@@ -121,6 +136,19 @@ internal class MainStoreFactory(
                 is Msg.Assemblies -> {
                     copy(assemblies = msg.value)
                 }
+
+                is Msg.Components -> {
+                    println(msg.value)
+                    copy(components = msg.value)
+                }
+
+                is Msg.UpdateAssemble -> {
+                    val new = assemblies.toMutableList()
+                    val index = new.indexOfFirst { msg.value.assembleId == it.assembleId }
+                    new[index] = msg.value
+                    copy(assemblies = new)
+                }
+
             }
         }
     }

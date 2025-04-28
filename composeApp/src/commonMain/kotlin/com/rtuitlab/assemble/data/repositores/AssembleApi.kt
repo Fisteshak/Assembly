@@ -1,6 +1,8 @@
 package com.rtuitlab.assemble.data.repositores
 
-import com.rtuitlab.assemble.data.entities.NetworkAssemble
+import com.rtuitlab.assemble.data.entities.AssembleForListOutDTO
+import com.rtuitlab.assemble.data.entities.ComponentOutDTO
+import com.rtuitlab.assemble.data.entities.FullAssembleDataOutDTO
 import com.rtuitlab.assemble.di.AppModule
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
@@ -13,31 +15,37 @@ import io.ktor.client.statement.HttpResponse
 class AssembleApi(
     private val client: HttpClient = AppModule.getClient()
 ) {
-    private val assemblies = createSampleAssembles(12)
+    // private val assemblies = createSampleAssembles(12)
 
 
-    suspend fun getAssembles(): List<NetworkAssemble> {
+    suspend fun getAssembles(): List<AssembleForListOutDTO> {
 
         val response: HttpResponse = client.get("assemblies") {
         }
 
-        val assemblies: List<NetworkAssemble> = response.body()
+        val assemblies: List<AssembleForListOutDTO> = response.body()
 
         return assemblies
     }
 
 
-    suspend fun getAssembleById(id: Long): NetworkAssemble {
+    suspend fun getAssembleById(id: Long): FullAssembleDataOutDTO {
         val response = client.get("assemblies/$id") {}
 
-        val assemble: NetworkAssemble = response.body()
+        val assemble: FullAssembleDataOutDTO = response.body()
 
         return assemble
+    }
 
+    suspend fun getComponents(): List<ComponentOutDTO> {
+        val response = client.get("components") { }
+        val components: List<ComponentOutDTO> = response.body()
+
+        return components
     }
 
     suspend fun createAssemble(assemble: Assemble): Assemble {
-        assemblies += assemble
+        // assemblies += assemble
         return assemble
     }
 
