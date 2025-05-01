@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.IconButton
@@ -19,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ import assembly.composeapp.generated.resources.minus_icon
 import assembly.composeapp.generated.resources.plus_icon
 import assembly.composeapp.generated.resources.trash_icon
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
+import com.rtuitlab.assemble.domain.entities.Component
 import org.jetbrains.compose.resources.painterResource
 
 
@@ -91,9 +93,12 @@ fun QuantitySelector(
 @Composable
 fun AssembleComponentRow(
     assembleComponent: AssembleComponent,
-    onNameChange: (String) -> Unit,
+    menuExpanded: Boolean,
+    components: List<Component>,
+    onTextChange: (String) -> Unit,
     onAmountChange: (Long) -> Unit,
     onDeleteClick: () -> Unit,
+    onDismissRequest: () -> Unit,
     backgroundColor: Color,
     textColor: Color,
     modifier: Modifier = Modifier,
@@ -114,7 +119,7 @@ fun AssembleComponentRow(
             ) {
             BasicTextField(
                 value = assembleComponent.name,
-                onValueChange = { onNameChange(it) },
+                onValueChange = { onTextChange(it) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -122,9 +127,26 @@ fun AssembleComponentRow(
                     color = textColor,
                     fontSize = 16.sp
                 ),
-                cursorBrush = SolidColor(textColor),
                 singleLine = true
             )
+            DropdownMenu(
+                expanded = menuExpanded,
+                onDismissRequest = { onDismissRequest() },
+                modifier = Modifier
+            ) {
+                components.forEach { component ->
+
+                    DropdownMenuItem(
+                        onClick = { /* Do something... */ },
+                        modifier = Modifier
+                    ) {
+                        Text(component.name)
+                    }
+                }
+
+            }
+
+
         }
 
         QuantitySelector(

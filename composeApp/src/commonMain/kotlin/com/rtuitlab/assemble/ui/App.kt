@@ -15,10 +15,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.toRoute
+import com.rtuitlab.assemble.di.koinModule
 import com.rtuitlab.assemble.ui.assemble.AssembleScreen
 import com.rtuitlab.assemble.ui.home.HomeScreen
 import com.rtuitlab.assemble.ui.theme.AppTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.core.context.startKoin
 
 fun printBackStack(backStack: List<NavBackStackEntry>) {
     print("backStack:")
@@ -33,6 +35,12 @@ fun printBackStack(backStack: List<NavBackStackEntry>) {
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun App(navController: NavHostController) {
+
+    startKoin {
+
+        modules(koinModule)
+    }
+
     AppTheme(darkTheme = false) {
         Surface(modifier = Modifier.fillMaxSize()) {
             val backStack = navController.currentBackStack

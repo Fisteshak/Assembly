@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.rtuitlab.assemble.MainStore
-import com.rtuitlab.assemble.di.AppModule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.getKoin
 
 @Preview
 @Composable
@@ -34,7 +34,7 @@ fun HomeScreenPreview() {
 fun HomeScreen(
     onAssembleClick: (Long) -> Unit
 ) {
-    val store = AppModule.getMainStore()
+    val store: MainStore = getKoin().get()
     val uiState by store.stateFlow.collectAsStateWithLifecycle()
     val assemblies = uiState.assemblies
 

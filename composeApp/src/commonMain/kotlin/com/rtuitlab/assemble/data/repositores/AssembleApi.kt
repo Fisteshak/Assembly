@@ -3,20 +3,17 @@ package com.rtuitlab.assemble.data.repositores
 import com.rtuitlab.assemble.data.entities.AssembleForListOutDTO
 import com.rtuitlab.assemble.data.entities.ComponentOutDTO
 import com.rtuitlab.assemble.data.entities.FullAssembleDataOutDTO
-import com.rtuitlab.assemble.di.AppModule
+import com.rtuitlab.assemble.data.httpClient
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
-import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 
 
 class AssembleApi(
-    private val client: HttpClient = AppModule.getClient()
 ) {
-    // private val assemblies = createSampleAssembles(12)
-
+    val client = httpClient()
 
     suspend fun getAssembles(): List<AssembleForListOutDTO> {
 

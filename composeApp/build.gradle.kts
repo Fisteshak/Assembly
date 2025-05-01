@@ -67,6 +67,13 @@ kotlin {
             implementation("io.ktor:ktor-client-logging:3.1.2")
             implementation("io.ktor:ktor-client-content-negotiation:3.1.2")
             implementation("io.ktor:ktor-serialization-kotlinx-json:3.1.2")
+            // koin
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
+            implementation(libs.koin.ktor)
+            implementation(libs.koin.logger.slf4j)
+
 
         }
 

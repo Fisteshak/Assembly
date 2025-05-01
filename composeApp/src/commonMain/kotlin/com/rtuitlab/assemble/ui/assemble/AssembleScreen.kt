@@ -18,9 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.rtuitlab.assemble.di.AppModule
+import com.rtuitlab.assemble.MainStore
 import com.rtuitlab.assemble.domain.entities.Assemble
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import org.koin.compose.getKoin
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
@@ -28,10 +29,12 @@ fun AssembleScreen(
     assembleId: Long?,
     modifier: Modifier = Modifier
 ) {
-    val store = AppModule.getMainStore()
+    val store: MainStore = getKoin().get()
+
 
     val uiState by store.stateFlow.collectAsStateWithLifecycle()
     val assemblies = uiState.assemblies
+    val components = uiState.components
 
     val assemble = assemblies.find { assembleId == it.assembleId } ?: Assemble(
         -1,
@@ -74,7 +77,11 @@ fun AssembleScreen(
                     style = MaterialTheme.typography.titleLarge
                 )
                 if (assemble.components != null)
-                    AssembleComponentsList(assemble.components, modifier = Modifier.fillMaxWidth())
+                    AssembleComponentsList(
+                        assemble.components,
+                        components,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 else
                     Text("No Data", fontSize = 20.sp)
             }

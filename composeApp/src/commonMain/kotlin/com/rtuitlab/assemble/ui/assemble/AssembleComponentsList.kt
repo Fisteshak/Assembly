@@ -12,14 +12,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
+import com.rtuitlab.assemble.domain.entities.Component
 
 @Composable
 fun AssembleComponentsList(
-    components: List<AssembleComponent>,
+    assembleComponents: List<AssembleComponent>,
+    components: List<Component>,
     modifier: Modifier = Modifier,
 ) {
     val stateVertical = rememberScrollState(0)
@@ -30,19 +36,27 @@ fun AssembleComponentsList(
         ) {
             Column(modifier = Modifier) {
 
+                var expandedIndex: Int? by remember { mutableStateOf(null) }
+                for ((index, component) in assembleComponents.withIndex()) {
+                    Box(Modifier) {
 
-                for ((index, component) in components.withIndex()) {
-                    AssembleComponentRow(
-                        component,
-                        {},
-                        {},
-                        {},
-                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                        textColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                        modifier = Modifier.padding(end = 20.dp)
-                    )
+                        AssembleComponentRow(
+                            assembleComponent = component,
+                            menuExpanded = expandedIndex == index,
+                            components = components,
+                            onTextChange = { expandedIndex = index; },
+                            onAmountChange = {},
+                            onDeleteClick = {},
+                            onDismissRequest = { expandedIndex = null },
+                            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                            textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.padding(end = 20.dp)
+                        )
 
-                    if (index != components.size - 1) {
+
+                    }
+
+                    if (index != assembleComponents.size - 1) {
                         HorizontalDivider(
                             thickness = 1.dp,
                             modifier = Modifier.fillMaxWidth().padding(vertical = 22.dp),

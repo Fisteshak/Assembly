@@ -8,8 +8,6 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.rtuitlab.assemble.MainStore.Intent
 import com.rtuitlab.assemble.MainStore.State
-import com.rtuitlab.assemble.data.repositores.AssembleApi
-import com.rtuitlab.assemble.data.repositores.AssembliesRepository
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.domain.entities.Component
 import com.rtuitlab.assemble.domain.usecases.GetAssembleByIdUseCase
@@ -38,7 +36,9 @@ internal interface MainStore : Store<Intent, State, Nothing> {
 
 internal class MainStoreFactory(
     private val storeFactory: StoreFactory,
-
+    private val getAssembliesUseCase: GetAssembliesUseCase,
+    private val getAssembleByIdUseCase: GetAssembleByIdUseCase,
+    private val getComponentsUseCase: GetComponentsUseCase
     ) {
 
     fun create(): MainStore {
@@ -48,7 +48,13 @@ internal class MainStoreFactory(
             initialState = State(),
             reducer = ReducerImpl,
             bootstrapper = SimpleBootstrapper(Action.FetchAssemblies, Action.FetchComponents),
-            executorFactory = MainStoreFactory::ExecutorImpl
+            executorFactory = {
+                ExecutorImpl(
+                    getAssembliesUseCase,
+                    getAssembleByIdUseCase,
+                    getComponentsUseCase
+                )
+            }
         ) {}
 
     }
@@ -72,15 +78,9 @@ internal class MainStoreFactory(
     }
 
     private class ExecutorImpl(
-        val getAssembliesUseCase: GetAssembliesUseCase = GetAssembliesUseCase(
-            AssembliesRepository(AssembleApi())
-        ),
-        val getAssembleByIdUseCase: GetAssembleByIdUseCase = GetAssembleByIdUseCase(
-            AssembliesRepository(AssembleApi())
-        ),
-        val getComponentsUseCase: GetComponentsUseCase = GetComponentsUseCase(
-            AssembliesRepository(AssembleApi())
-        ),
+        val getAssembliesUseCase: GetAssembliesUseCase,
+        val getAssembleByIdUseCase: GetAssembleByIdUseCase,
+        val getComponentsUseCase: GetComponentsUseCase,
     ) : CoroutineExecutor<Intent, Action, State, Msg, Nothing>() {
         override fun executeIntent(intent: Intent) {
             println("executor got intent: $intent")

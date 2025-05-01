@@ -1,38 +1,35 @@
 package com.rtuitlab.assemble.di
 
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
-import com.rtuitlab.assemble.MainStore
 import com.rtuitlab.assemble.MainStoreFactory
-import com.rtuitlab.assemble.data.httpClient
-import io.ktor.client.HttpClient
+import com.rtuitlab.assemble.data.repositores.AssembleApi
+import com.rtuitlab.assemble.data.repositores.AssembliesRepository
+import com.rtuitlab.assemble.domain.usecases.CreateAssembleUseCase
+import com.rtuitlab.assemble.domain.usecases.GetAssembleByIdUseCase
+import com.rtuitlab.assemble.domain.usecases.GetAssembliesUseCase
+import com.rtuitlab.assemble.domain.usecases.GetComponentsUseCase
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.module
 
-// manual DI
-// TODO следить за проблемами с жизненным циклом
-//  (без понятия есть ли они и как это работает в вебе)
-internal object AppModule {
-    init {
-        println("Created AppModule")
+
+val koinModule = module {
+
+
+    singleOf(::AssembleApi)
+
+    singleOf(::AssembliesRepository)
+
+    singleOf(::CreateAssembleUseCase)
+    singleOf(::GetAssembleByIdUseCase)
+    singleOf(::GetAssembliesUseCase)
+    singleOf(::GetComponentsUseCase)
+
+    single {
+        MainStoreFactory(
+            storeFactory = DefaultStoreFactory(),
+            getAssembliesUseCase = get(),
+            getAssembleByIdUseCase = get(),
+            getComponentsUseCase = get(),
+        ).create()
     }
-
-    private var mainStore: MainStore? = null
-
-    internal fun getMainStore(): MainStore {
-
-        return mainStore
-            ?: MainStoreFactory(DefaultStoreFactory()).create()
-                .also {
-                    mainStore = it
-                    println("Created MainStore")
-                }
-    }
-
-    private var client: HttpClient? = null
-
-    fun getClient(): HttpClient =
-        client ?: httpClient().also {
-            client = it
-            println("Created client")
-        }
-
-
 }
