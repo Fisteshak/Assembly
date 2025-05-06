@@ -56,6 +56,7 @@ kotlin {
             // mvikotlin
             implementation(libs.mvikotlin)
             implementation(libs.mvikotlin.main)
+            implementation(libs.mvikotlin.logging)
             implementation(libs.mvikotlin.extensions.coroutines)
             // serialization
             implementation(libs.serialization)
@@ -71,8 +72,6 @@ kotlin {
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
-            implementation(libs.koin.ktor)
-            implementation(libs.koin.logger.slf4j)
 
 
         }

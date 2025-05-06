@@ -8,6 +8,7 @@ data class AssembleComponent(
     val amount: Long,
     val linkToPhoto: String?,
     val linkToSound: String?,
+    val isEdited: Boolean
 )
 
 fun FullAssembleComponentDataDTO.toComponent(): AssembleComponent {
@@ -16,6 +17,18 @@ fun FullAssembleComponentDataDTO.toComponent(): AssembleComponent {
         name = this.name,
         amount = this.amount,
         linkToPhoto = this.linkToPhoto,
-        linkToSound = this.linkToSound
+        linkToSound = this.linkToSound,
+        isEdited = false
+    )
+}
+
+fun Component.toAssembleComponent(): AssembleComponent {
+    return AssembleComponent(
+        componentId = this.id,
+        name = this.name,
+        amount = 1,
+        linkToPhoto = null,
+        linkToSound = null,
+        isEdited = false
     )
 }

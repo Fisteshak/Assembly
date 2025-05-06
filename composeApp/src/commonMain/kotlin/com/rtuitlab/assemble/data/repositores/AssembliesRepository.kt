@@ -27,5 +27,9 @@ class AssembliesRepository(
         return api.createAssemble(assemble)
     }
 
+    suspend fun updateAssemble(assemble: Assemble): Assemble {
+        return api.updateAssemble(assemble)
+    }
+
 
 }

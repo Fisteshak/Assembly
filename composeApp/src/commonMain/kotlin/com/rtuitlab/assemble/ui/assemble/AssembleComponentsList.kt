@@ -1,53 +1,61 @@
 package com.rtuitlab.assemble.ui.assemble
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.rtuitlab.assemble.AssembleStore
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
 import com.rtuitlab.assemble.domain.entities.Component
+import org.koin.compose.getKoin
 
 @Composable
 fun AssembleComponentsList(
     assembleComponents: List<AssembleComponent>,
     components: List<Component>,
+    expandedIndex: Int?,
+    scrollState: ScrollState,
+    onAmountChange: (Int, Long) -> Unit,
+    onNameChange: (Int, String) -> Unit,
+    onNameClick: (Int) -> Unit,
+    onMenuComponentClick: (Int, Component) -> Unit,
+    onMenuDismissRequest: () -> Unit,
+    onDeleteClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val stateVertical = rememberScrollState(0)
+    val store: AssembleStore = getKoin().get()
+
     Box(modifier = modifier) {
 
         Box(
-            modifier = Modifier.verticalScroll(stateVertical).padding(end = 24.dp, bottom = 12.dp)
+            modifier = Modifier.verticalScroll(scrollState).padding(end = 24.dp, bottom = 12.dp)
         ) {
             Column(modifier = Modifier) {
 
-                var expandedIndex: Int? by remember { mutableStateOf(null) }
                 for ((index, component) in assembleComponents.withIndex()) {
                     Box(Modifier) {
 
                         AssembleComponentRow(
                             assembleComponent = component,
                             menuExpanded = expandedIndex == index,
-                            components = components,
-                            onTextChange = { expandedIndex = index; },
-                            onAmountChange = {},
-                            onDeleteClick = {},
-                            onDismissRequest = { expandedIndex = null },
+                            components = components.filter { it.name.contains(component.name) },
+                            onTextChange = { onNameChange(index, it) },
+                            onTextClick = { onNameClick(index) },
+                            onAmountChange = { onAmountChange(index, it) },
+                            onDeleteClick = { onDeleteClick(index) },
+                            onMenuDismissRequest = { onMenuDismissRequest() },
+                            onMenuComponentClick = { onMenuComponentClick(index, it) },
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                             textColor = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.padding(end = 20.dp)
@@ -69,7 +77,7 @@ fun AssembleComponentsList(
         VerticalScrollbar(
             modifier = Modifier.align(Alignment.CenterEnd)
                 .fillMaxHeight(),
-            adapter = rememberScrollbarAdapter(stateVertical)
+            adapter = rememberScrollbarAdapter(scrollState)
         )
     }
 

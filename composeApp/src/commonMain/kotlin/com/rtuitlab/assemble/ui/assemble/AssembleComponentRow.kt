@@ -1,6 +1,8 @@
 package com.rtuitlab.assemble.ui.assemble
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -18,6 +20,8 @@ import androidx.compose.material.Text
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,6 +29,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.PopupProperties
 import assembly.composeapp.generated.resources.Res
 import assembly.composeapp.generated.resources.minus_icon
 import assembly.composeapp.generated.resources.plus_icon
@@ -51,13 +56,13 @@ fun QuantitySelector(
         val colorEnabled = Color(0xFFB8C4FF)
         val colorDisabled = Color(0xFFE9E7EF)
         IconButton(
-            onClick = { if (count > 0) onCountChange(count - 1) },
-            enabled = count > 0
+            onClick = { if (count > 1) onCountChange(count - 1) },
+            enabled = count > 1
         ) {
             Icon(
                 painter = painterResource(Res.drawable.minus_icon),
                 contentDescription = "Decrease quantity",
-                tint = if (count > 0) colorEnabled else colorDisabled
+                tint = if (count > 1) colorEnabled else colorDisabled
             )
         }
 
@@ -96,9 +101,11 @@ fun AssembleComponentRow(
     menuExpanded: Boolean,
     components: List<Component>,
     onTextChange: (String) -> Unit,
+    onTextClick: () -> Unit,
     onAmountChange: (Long) -> Unit,
     onDeleteClick: () -> Unit,
-    onDismissRequest: () -> Unit,
+    onMenuDismissRequest: () -> Unit,
+    onMenuComponentClick: (Component) -> Unit,
     backgroundColor: Color,
     textColor: Color,
     modifier: Modifier = Modifier,
@@ -117,6 +124,7 @@ fun AssembleComponentRow(
             modifier = Modifier.weight(1f).fillMaxHeight(),
 
             ) {
+
             BasicTextField(
                 value = assembleComponent.name,
                 onValueChange = { onTextChange(it) },
@@ -127,17 +135,28 @@ fun AssembleComponentRow(
                     color = textColor,
                     fontSize = 16.sp
                 ),
-                singleLine = true
+                singleLine = true,
+                interactionSource = remember { MutableInteractionSource() }
+                    .also { interactionSource ->
+                        LaunchedEffect(interactionSource) {
+                            interactionSource.interactions.collect {
+                                if (it is PressInteraction.Release) {
+                                    onTextClick()
+                                }
+                            }
+                        }
+                    }
             )
             DropdownMenu(
                 expanded = menuExpanded,
-                onDismissRequest = { onDismissRequest() },
+                onDismissRequest = { onMenuDismissRequest() },
+                properties = PopupProperties(focusable = false),
                 modifier = Modifier
             ) {
                 components.forEach { component ->
 
                     DropdownMenuItem(
-                        onClick = { /* Do something... */ },
+                        onClick = { onMenuComponentClick(component) },
                         modifier = Modifier
                     ) {
                         Text(component.name)

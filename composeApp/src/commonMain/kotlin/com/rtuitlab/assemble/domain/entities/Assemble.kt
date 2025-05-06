@@ -1,5 +1,7 @@
 package com.rtuitlab.assemble.domain.entities
 
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import com.rtuitlab.assemble.data.entities.AssembleForListOutDTO
 import com.rtuitlab.assemble.data.entities.FullAssembleDataOutDTO
 
@@ -11,8 +13,10 @@ data class Assemble(
     val linkToProject: String?,
     val linkToSound: String?,
     val userId: Long?,
-    val components: List<AssembleComponent>?
-)
+    val components: SnapshotStateList<AssembleComponent>?
+) {
+
+}
 
 fun AssembleForListOutDTO.toAssemble(): Assemble {
 
@@ -42,6 +46,6 @@ fun FullAssembleDataOutDTO.toAssemble(): Assemble {
         linkToProject = this.linkToProject,
         linkToSound = this.linkToSound,
         userId = this.userId,
-        components = mappedComponents
+        components = mappedComponents.toMutableStateList()
     )
 }
