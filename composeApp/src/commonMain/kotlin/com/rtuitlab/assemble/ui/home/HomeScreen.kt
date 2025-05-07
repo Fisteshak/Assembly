@@ -56,10 +56,17 @@ fun HomeScreen(
                 rows = 2, cols = 4,
                 modifier = Modifier.padding(10.dp),
                 content = { item ->
-                    AssembleCard(item, {
-                        store.accept(AssembleStore.Intent.FetchAssembleById(item.assembleId))
-                        onAssembleClick(item.assembleId)
-                    }, modifier = Modifier)
+                    AssembleCard(
+                        item,
+                        onClick = {
+                            store.accept(AssembleStore.Intent.FetchAssembleById(item.assembleId))
+                            onAssembleClick(item.assembleId)
+                        },
+                        onDelete = {
+                            store.accept(AssembleStore.Intent.DeleteAssemble(item.assembleId))
+                        },
+                        modifier = Modifier
+                    )
                 },
                 placeholder = {
                     PlaceholderAssembleCard()

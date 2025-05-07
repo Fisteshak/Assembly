@@ -41,15 +41,15 @@ fun EditInstructionDialog(
                 Modifier
 
             ) {
-                OutlinedTextField(
 
+                OutlinedTextField(
                     value = instructionInputText,
                     onValueChange = { instructionInputText = it },
                     label = { Text("Инструкция") },
                     textStyle = MaterialTheme.typography.bodyLarge,
                     minLines = 5,
+                    maxLines = 10,
                     modifier = Modifier
-
                         .fillMaxWidth()
                         .focusRequester(focusRequester),
                     colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = MaterialTheme.colorScheme.primary)

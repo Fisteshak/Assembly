@@ -2,6 +2,9 @@ package com.rtuitlab.assemble.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +19,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,7 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import assembly.composeapp.generated.resources.Res
-import assembly.composeapp.generated.resources.volume_icon
+import assembly.composeapp.generated.resources.trash_icon
 import com.rtuitlab.assemble.domain.entities.Assemble
 import org.jetbrains.compose.resources.painterResource
 
@@ -31,16 +38,21 @@ import org.jetbrains.compose.resources.painterResource
 fun AssembleCard(
     assemble: Assemble,
     onClick: () -> Unit,
+    onDelete: () -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = Color(0xFFEEF1F4),
     contentColor: Color = Color.DarkGray
 ) {
+    var showDeleteDialog by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isHovered by interactionSource.collectIsHoveredAsState()
     Box(
-        modifier = Modifier
+        modifier = modifier
             .width(190.dp).height(120.dp)
             .background(color = backgroundColor, shape = RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() }
+            .hoverable(interactionSource)
     ) {
 
         Column(
@@ -58,13 +70,14 @@ fun AssembleCard(
                     style = MaterialTheme.typography.titleMedium,
                     color = contentColor
                 )
-                if (assemble.linkToSound != null) {
+                if (isHovered)
                     Icon(
-                        painter = painterResource(resource = Res.drawable.volume_icon),
-                        contentDescription = "Audio Indicator",
+                        painter = painterResource(resource = Res.drawable.trash_icon),
+                        contentDescription = "Delete Button",
                         tint = Color.Unspecified,
+                        modifier = Modifier.height(24.dp).clickable { showDeleteDialog = true }
                     )
-                }
+
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -78,7 +91,15 @@ fun AssembleCard(
             )
         }
     }
-
+    when {
+        showDeleteDialog -> {
+            DeleteDialog(
+                assemble.name,
+                onConfirmation = { showDeleteDialog = false; onDelete() },
+                onDismissRequest = { showDeleteDialog = false }
+            )
+        }
+    }
 }
 
 

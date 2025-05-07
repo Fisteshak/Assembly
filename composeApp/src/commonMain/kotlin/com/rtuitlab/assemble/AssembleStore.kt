@@ -19,6 +19,7 @@ import com.rtuitlab.assemble.AssembleStoreFactory.Msg.UpdateCurrentAssemble
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.domain.entities.Component
 import com.rtuitlab.assemble.domain.usecases.CreateAssembleUseCase
+import com.rtuitlab.assemble.domain.usecases.DeleteAssembleByIdUseCase
 import com.rtuitlab.assemble.domain.usecases.GetAssembleByIdUseCase
 import com.rtuitlab.assemble.domain.usecases.GetAssembliesUseCase
 import com.rtuitlab.assemble.domain.usecases.GetComponentsUseCase
@@ -52,6 +53,10 @@ internal interface AssembleStore : Store<Intent, State, Nothing> {
         data class PublishAssemble(
             val value: Assemble
         ) : Intent
+
+        data class DeleteAssemble(
+            val assembleId: Long
+        ) : Intent
     }
 
     data class State(
@@ -72,6 +77,7 @@ internal class AssembleStoreFactory(
     private val getComponentsUseCase: GetComponentsUseCase,
     private val createAssembleUseCase: CreateAssembleUseCase,
     private val updateAssembleUseCase: UpdateAssembleUseCase,
+    private val deleteAssembleByIdUseCase: DeleteAssembleByIdUseCase,
 ) {
 
     fun create(): AssembleStore {
@@ -87,7 +93,8 @@ internal class AssembleStoreFactory(
                     getAssembleByIdUseCase,
                     getComponentsUseCase,
                     createAssembleUseCase,
-                    updateAssembleUseCase
+                    updateAssembleUseCase,
+                    deleteAssembleByIdUseCase
                 )
             }
         ) {}
@@ -118,7 +125,8 @@ internal class AssembleStoreFactory(
         val getAssembleByIdUseCase: GetAssembleByIdUseCase,
         val getComponentsUseCase: GetComponentsUseCase,
         val createAssembleUseCase: CreateAssembleUseCase,
-        val updateAssembleUseCase: UpdateAssembleUseCase
+        val updateAssembleUseCase: UpdateAssembleUseCase,
+        val deleteAssembleByIdUseCase: DeleteAssembleByIdUseCase,
     ) : CoroutineExecutor<Intent, Action, State, Msg, Nothing>() {
         override fun executeIntent(intent: Intent) {
 //            println("executor got intent: $intent")
@@ -154,6 +162,14 @@ internal class AssembleStoreFactory(
 
                         }
                         forward(Action.FetchAssemblies)
+                    }
+                }
+
+                is Intent.DeleteAssemble -> {
+                    scope.launch {
+                        deleteAssembleByIdUseCase(intent.assembleId)
+                        forward(Action.FetchAssemblies)
+
                     }
                 }
             }

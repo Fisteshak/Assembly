@@ -6,6 +6,7 @@ import com.rtuitlab.assemble.AssembleStoreFactory
 import com.rtuitlab.assemble.data.repositores.AssembleApi
 import com.rtuitlab.assemble.data.repositores.AssembliesRepository
 import com.rtuitlab.assemble.domain.usecases.CreateAssembleUseCase
+import com.rtuitlab.assemble.domain.usecases.DeleteAssembleByIdUseCase
 import com.rtuitlab.assemble.domain.usecases.GetAssembleByIdUseCase
 import com.rtuitlab.assemble.domain.usecases.GetAssembliesUseCase
 import com.rtuitlab.assemble.domain.usecases.GetComponentsUseCase
@@ -24,6 +25,7 @@ val koinModule = module {
     singleOf(::CreateAssembleUseCase)
     singleOf(::UpdateAssembleUseCase)
     singleOf(::GetAssembleByIdUseCase)
+    singleOf(::DeleteAssembleByIdUseCase)
     singleOf(::GetAssembliesUseCase)
     singleOf(::GetComponentsUseCase)
 
@@ -34,7 +36,9 @@ val koinModule = module {
             getAssembleByIdUseCase = get(),
             getComponentsUseCase = get(),
             createAssembleUseCase = get(),
-            updateAssembleUseCase = get()
+            updateAssembleUseCase = get(),
+            deleteAssembleByIdUseCase = get(),
+
         ).create()
     }
 }

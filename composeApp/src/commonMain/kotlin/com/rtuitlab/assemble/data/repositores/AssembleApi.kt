@@ -8,6 +8,7 @@ import com.rtuitlab.assemble.data.entities.toAssembleUpdateIn
 import com.rtuitlab.assemble.data.httpClient
 import com.rtuitlab.assemble.domain.entities.Assemble
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.patch
 import io.ktor.client.request.post
@@ -61,8 +62,13 @@ class AssembleApi(
             contentType(ContentType.Application.Json)
             setBody(assemble.toAssembleUpdateIn())
         }
-
         return assemble
+    }
+
+    suspend fun deleteAssemble(assembleId: Long) {
+        val response = client.delete("assemblies/${assembleId}") {
+
+        }
     }
 
 

@@ -31,5 +31,9 @@ class AssembliesRepository(
         return api.updateAssemble(assemble)
     }
 
+    suspend fun deleteAssemble(assembleId: Long) {
+        return api.deleteAssemble(assembleId)
+    }
+
 
 }
