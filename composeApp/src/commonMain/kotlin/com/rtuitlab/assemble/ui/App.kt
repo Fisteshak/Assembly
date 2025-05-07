@@ -138,7 +138,10 @@ fun App(navController: NavHostController) {
                             },
                             onNameChange = { index, name ->
                                 currentAssemble.components!![index] =
-                                    currentAssemble.components!![index].copy(name = name)
+                                    currentAssemble.components!![index].copy(
+                                        name = name,
+                                        componentId = -1
+                                    )
                                 store.accept(
                                     AssembleStore.Intent.UpdateCurrentAssemble(
                                         currentAssemble

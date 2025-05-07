@@ -18,6 +18,7 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -132,7 +133,7 @@ fun AssembleComponentRow(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 12.dp),
                 textStyle = TextStyle(
-                    color = textColor,
+                    color = if (assembleComponent.componentId != -1L) textColor else MaterialTheme.colorScheme.error,
                     fontSize = 16.sp
                 ),
                 singleLine = true,

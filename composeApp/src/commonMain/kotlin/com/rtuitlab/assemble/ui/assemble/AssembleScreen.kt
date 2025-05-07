@@ -80,10 +80,16 @@ fun AssembleScreen(
                             scrollState.animateScrollTo(scrollState.maxValue)
                         }
                     }, Modifier.padding(vertical = 16.dp))
-                    AssembleFooter({}, {
-                        store.accept(AssembleStore.Intent.PublishAssemble(assemble))
-                        onNavigateBack()
-                    }, Modifier.fillMaxWidth())
+                    AssembleFooter(
+                        onSaveDraft = {},
+                        onPublishAssemble = {
+                            if (assemble.components?.all { it.componentId != -1L } == true) {
+
+                                store.accept(AssembleStore.Intent.PublishAssemble(assemble))
+                                onNavigateBack()
+                            }
+                        }, Modifier.fillMaxWidth()
+                    )
                 }
 
             }

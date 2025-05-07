@@ -1,12 +1,12 @@
 [versions]
 androidx-lifecycle = "2.8.4"
-compose-multiplatform = "1.8.0-beta02"
+compose-multiplatform = "1.8.0"
 junit = "4.13.2"
 kotlin = "2.1.20"
 mvikotlin = "4.3.0"
 kotlinx-coroutines = "1.10.1"
 serialization-json = "1.8.0"
-navigation-multiplatform = "2.8.0-alpha10"
+navigation-multiplatform = "2.9.0-beta01"
 ktor = "3.1.2"
 koin-bom = "4.0.3"
 
