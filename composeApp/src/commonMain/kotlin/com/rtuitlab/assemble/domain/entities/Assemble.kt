@@ -35,7 +35,7 @@ fun AssembleForListOutDTO.toAssemble(): Assemble {
 fun FullAssembleDataOutDTO.toAssemble(): Assemble {
 
     val mappedComponents = this.components.map { networkComponent ->
-        networkComponent.toComponent()
+        networkComponent.toAssembleComponent()
     }
 
     return Assemble(
@@ -49,3 +49,4 @@ fun FullAssembleDataOutDTO.toAssemble(): Assemble {
         components = mappedComponents.toMutableStateList()
     )
 }
+

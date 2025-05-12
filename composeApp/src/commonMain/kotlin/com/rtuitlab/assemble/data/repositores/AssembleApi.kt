@@ -1,6 +1,7 @@
 package com.rtuitlab.assemble.data.repositores
 
 import com.rtuitlab.assemble.data.entities.AssembleForListOutDTO
+import com.rtuitlab.assemble.data.entities.AssembleOutDTO
 import com.rtuitlab.assemble.data.entities.ComponentOutDTO
 import com.rtuitlab.assemble.data.entities.FullAssembleDataOutDTO
 import com.rtuitlab.assemble.data.entities.toAssembleIn
@@ -48,26 +49,30 @@ class AssembleApi(
         return components
     }
 
-    suspend fun createAssemble(assemble: Assemble): Assemble {
+    suspend fun createAssemble(assemble: Assemble): Long {
         val response = client.post("assemblies") {
             contentType(ContentType.Application.Json)
             setBody(assemble.toAssembleIn())
         }
-
-        return assemble
+        val new: AssembleOutDTO = response.body()
+        return new.id
     }
 
-    suspend fun updateAssemble(assemble: Assemble): Assemble {
+    suspend fun updateAssemble(assemble: Assemble): Long {
         val response = client.patch("assemblies/${assemble.assembleId}") {
             contentType(ContentType.Application.Json)
             setBody(assemble.toAssembleUpdateIn())
         }
-        return assemble
+        return assemble.assembleId
     }
 
     suspend fun deleteAssemble(assembleId: Long) {
         val response = client.delete("assemblies/${assembleId}") {
+        }
+    }
 
+    suspend fun generateSound(assembleId: Long) {
+        val response = client.get("assemblies/${assembleId}/synthesize_speech") {
         }
     }
 

@@ -23,16 +23,26 @@ class AssembliesRepository(
         return api.getComponents().map { it.toComponent() }
     }
 
-    suspend fun createAssemble(assemble: Assemble): Assemble {
+    /**
+     * returns ID
+     */
+    suspend fun createAssemble(assemble: Assemble): Long {
         return api.createAssemble(assemble)
     }
 
-    suspend fun updateAssemble(assemble: Assemble): Assemble {
+    /**
+     * returns ID
+     */
+    suspend fun updateAssemble(assemble: Assemble): Long {
         return api.updateAssemble(assemble)
     }
 
     suspend fun deleteAssemble(assembleId: Long) {
         return api.deleteAssemble(assembleId)
+    }
+
+    suspend fun generateSound(assembleId: Long) {
+        return api.generateSound(assembleId)
     }
 
 

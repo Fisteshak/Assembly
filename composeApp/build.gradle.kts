@@ -7,7 +7,9 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.serialization)
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
+
 
 compose.resources {
     publicResClass = true
@@ -72,7 +74,8 @@ kotlin {
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
-
+            // audio player
+            implementation("eu.iamkonstantin.kotlin:gadulka:1.6.3")
 
         }
 

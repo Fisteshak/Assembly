@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 fun AssembleFooter(
     onSaveDraft: () -> Unit,
     onPublishAssemble: () -> Unit,
+    isNew: Boolean,
+    isSaving: Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -59,10 +61,11 @@ fun AssembleFooter(
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.primary),
             shape = RoundedCornerShape(10.dp),
             elevation = null,
+            enabled = !isSaving
 
             ) {
             Text(
-                "Опубликовать сборку",
+                if (isNew) "Опубликовать сборку" else "Сохранить сборку",
                 color = MaterialTheme.colorScheme.onPrimary,
                 style = MaterialTheme.typography.titleMedium
             )

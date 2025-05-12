@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import assembly.composeapp.generated.resources.Res
 import assembly.composeapp.generated.resources.minus_icon
+import assembly.composeapp.generated.resources.play_icon
 import assembly.composeapp.generated.resources.plus_icon
 import assembly.composeapp.generated.resources.trash_icon
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
@@ -95,7 +96,6 @@ fun QuantitySelector(
 }
 
 
-
 @Composable
 fun AssembleComponentRow(
     assembleComponent: AssembleComponent,
@@ -107,6 +107,7 @@ fun AssembleComponentRow(
     onDeleteClick: () -> Unit,
     onMenuDismissRequest: () -> Unit,
     onMenuComponentClick: (Component) -> Unit,
+    onPlayButtonClick: () -> Unit,
     backgroundColor: Color,
     textColor: Color,
     modifier: Modifier = Modifier,
@@ -184,5 +185,16 @@ fun AssembleComponentRow(
                 tint = Color.Unspecified
             )
         }
+//        Spacer(Modifier.width(20.dp))
+        val colorEnabled = Color(0xFF5A5D72)
+        val colorDisabled = Color(0x00000000)
+        if (assembleComponent.linkToSound != null)
+            IconButton(onClick = onPlayButtonClick, enabled = true) {
+                Icon(
+                    painter = painterResource(Res.drawable.play_icon),
+                    contentDescription = "Play Sound",
+                    tint = colorEnabled
+                )
+            }
     }
 }

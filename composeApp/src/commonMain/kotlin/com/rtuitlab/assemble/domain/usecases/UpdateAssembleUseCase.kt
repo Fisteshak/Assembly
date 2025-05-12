@@ -6,7 +6,10 @@ import com.rtuitlab.assemble.domain.entities.Assemble
 class UpdateAssembleUseCase(
     val assembliesRepository: AssembliesRepository
 ) {
-    suspend operator fun invoke(assemble: Assemble): Assemble {
+    /**
+     * returns ID
+     */
+    suspend operator fun invoke(assemble: Assemble): Long {
         return assembliesRepository.updateAssemble(assemble)
     }
 }

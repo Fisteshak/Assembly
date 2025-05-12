@@ -1,5 +1,6 @@
 package com.rtuitlab.assemble.domain.entities
 
+import com.rtuitlab.assemble.data.entities.ComponentsAssembleInDTO
 import com.rtuitlab.assemble.data.entities.FullAssembleComponentDataDTO
 
 data class AssembleComponent(
@@ -11,7 +12,7 @@ data class AssembleComponent(
     val isEdited: Boolean
 )
 
-fun FullAssembleComponentDataDTO.toComponent(): AssembleComponent {
+fun FullAssembleComponentDataDTO.toAssembleComponent(): AssembleComponent {
     return AssembleComponent(
         componentId = this.componentId,
         name = this.name,
@@ -27,6 +28,17 @@ fun Component.toAssembleComponent(): AssembleComponent {
         componentId = this.id,
         name = this.name,
         amount = 1,
+        linkToPhoto = null,
+        linkToSound = null,
+        isEdited = false
+    )
+}
+
+fun ComponentsAssembleInDTO.toAssembleComponent(): AssembleComponent {
+    return AssembleComponent(
+        componentId = this.componentId,
+        name = "",
+        amount = this.amount,
         linkToPhoto = null,
         linkToSound = null,
         isEdited = false

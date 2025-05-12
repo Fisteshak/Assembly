@@ -7,6 +7,6 @@ class GetAssembleByIdUseCase(
     val assembliesRepository: AssembliesRepository
 ) {
     suspend operator fun invoke(id: Long): Assemble {
-        return assembliesRepository.getAssembleById(id)
+        return assembliesRepository.getAssembleById(id).also { println(it) }
     }
 }

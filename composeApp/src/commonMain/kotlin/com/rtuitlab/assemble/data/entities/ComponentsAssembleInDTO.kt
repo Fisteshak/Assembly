@@ -14,3 +14,4 @@ data class ComponentsAssembleInDTO(
 fun AssembleComponent.toComponentsAssembleIn(): ComponentsAssembleInDTO {
     return ComponentsAssembleInDTO(this.componentId, this.amount)
 }
+

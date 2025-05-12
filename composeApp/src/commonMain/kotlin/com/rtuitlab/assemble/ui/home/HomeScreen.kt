@@ -59,11 +59,12 @@ fun HomeScreen(
                     AssembleCard(
                         item,
                         onClick = {
+                            store.accept(AssembleStore.Intent.SetCurrentAssemble(null))
                             store.accept(AssembleStore.Intent.FetchAssembleById(item.assembleId))
                             onAssembleClick(item.assembleId)
                         },
                         onDelete = {
-                            store.accept(AssembleStore.Intent.DeleteAssemble(item.assembleId))
+                            store.accept(AssembleStore.Intent.DeleteAssembleById(item.assembleId))
                         },
                         modifier = Modifier
                     )
