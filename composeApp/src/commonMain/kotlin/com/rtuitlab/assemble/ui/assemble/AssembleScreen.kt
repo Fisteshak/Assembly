@@ -171,7 +171,7 @@ fun AssembleScreen(
                                     isSaving = true
                                     scope.launch {
                                         store.labels.collect {
-                                            if (it is AssembleStore.Label.PublishedAssemble && it.id == assemble.assembleId) {
+                                            if (it is AssembleStore.Label.PublishedAssemble) {
                                                 onNavigateBack()
                                             }
                                         }
@@ -208,7 +208,10 @@ fun AssembleScreen(
                             expandedIndex = expandedIndex,
                             onAmountChange = { index, amount ->
                                 assemble.components[index] =
-                                    assemble.components[index].copy(amount = amount)
+                                    assemble.components[index].copy(
+                                        amount = amount,
+                                        linkToSound = null
+                                    )
                                 store.accept(
                                     AssembleStore.Intent.SetCurrentAssemble(
                                         assemble

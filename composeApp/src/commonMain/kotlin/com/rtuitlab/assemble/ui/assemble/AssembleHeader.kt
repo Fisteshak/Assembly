@@ -123,6 +123,8 @@ fun AssembleHeader(
                     tint = Color.Unspecified
                 )
             }
+            Spacer(modifier = Modifier.width(10.dp))
+
             if (showControls)
                 IconButton(
                     onClick = onControlClick,

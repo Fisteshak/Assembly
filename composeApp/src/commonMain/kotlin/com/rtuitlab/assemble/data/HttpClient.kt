@@ -22,6 +22,7 @@ import kotlinx.serialization.json.Json
 private const val BASE_URL = "https://assemble.rtuitlab.dev/api/v1/"
 
 var tokens: BearerTokens? = null
+var user: UserInDTO? = null
 
 expect fun httpClient(
     config: HttpClientConfig<*>.() -> Unit = {

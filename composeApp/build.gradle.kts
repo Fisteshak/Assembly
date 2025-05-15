@@ -7,9 +7,13 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.serialization)
-    id("org.openjfx.javafxplugin") version "0.1.0"
+//    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
+//javafx {
+//    version = "19.0.1"
+//    modules = listOf("javafx.controls", "javafx.fxml", "javafx.swing", "javafx.base", "javafx.media", "javafx.web")
+//}
 
 compose.resources {
     publicResClass = true
@@ -18,12 +22,17 @@ compose.resources {
 }
 
 kotlin {
-    jvm("desktop")
+    jvm("desktop") {
+        compilations.all {
+            kotlinOptions.jvmTarget = "21"
+        }
+    }
+
 
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        moduleName = "composeApp"
+        outputModuleName = "composeApp"
         browser {
             val rootDirPath = project.rootDir.path
             val projectDirPath = project.projectDir.path
@@ -53,7 +62,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-          //  implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             // mvikotlin
             implementation(libs.mvikotlin)
@@ -76,6 +85,13 @@ kotlin {
             implementation(libs.koin.compose)
             // audio player
             implementation("eu.iamkonstantin.kotlin:gadulka:1.6.3")
+            val fxSuffix = "win"
+            implementation("org.openjfx:javafx-base:21:${fxSuffix}")
+            implementation("org.openjfx:javafx-graphics:21:${fxSuffix}")
+            implementation("org.openjfx:javafx-controls:21:${fxSuffix}")
+            implementation("org.openjfx:javafx-swing:21:${fxSuffix}")
+            implementation("org.openjfx:javafx-web:21:${fxSuffix}")
+            implementation("org.openjfx:javafx-media:21:${fxSuffix}")
 
         }
 
