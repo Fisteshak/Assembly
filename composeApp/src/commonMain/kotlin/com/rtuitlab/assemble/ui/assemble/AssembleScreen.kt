@@ -3,6 +3,7 @@ package com.rtuitlab.assemble.ui.assemble
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,8 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.rtuitlab.assemble.AssembleStore
+import com.rtuitlab.assemble.AssembleStore.Label
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
-import eu.iamkonstantin.kotlin.gadulka.rememberGadulkaState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -42,6 +44,7 @@ import org.koin.compose.getKoin
 @Composable
 fun AssembleScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToSoundWindow: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val store: AssembleStore = getKoin().get()
@@ -51,7 +54,14 @@ fun AssembleScreen(
     val scope = rememberCoroutineScope()
     var isSaving by remember { mutableStateOf(false) }
 
-    val player = rememberGadulkaState()
+
+    var showSaveDialog by remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState(0)
+    var expandedIndex: Int? by remember { mutableStateOf(null) }
+    val coroutineScope = rememberCoroutineScope()
+    var showPublishAssembleProgressIndicator by remember { mutableStateOf(false) }
+
+
 
     Box(
         modifier = modifier.fillMaxSize().padding(top = 30.dp, start = 10.dp, end = 10.dp),
@@ -64,10 +74,64 @@ fun AssembleScreen(
             )
 
         } else {
-            val scrollState = rememberScrollState(0)
-            var soundPageExpanded by remember { mutableStateOf(false) }
-            var expandedIndex: Int? by remember { mutableStateOf(null) }
-            val coroutineScope = rememberCoroutineScope()
+
+            when {
+                //
+                showSaveDialog ->
+                    SaveAssembleDialog(
+                        assembleName = assemble.name,
+                        onDismissRequest = { showSaveDialog = false },
+                        onDismissButtonClick = { showSaveDialog = false },
+                        onConfirmButtonClick = {
+                            showSaveDialog = false
+                            showPublishAssembleProgressIndicator = true
+                        }
+                    )
+
+
+                // this progress indicator is shown before going to soundWindow
+                // it publishes assemble, and updates id of current assemble
+                // (in case when current assemble was new and had id of -1)
+                showPublishAssembleProgressIndicator -> {
+                    Dialog(onDismissRequest = {}) {
+
+                        LaunchedEffect(Unit) {
+                            store.accept(AssembleStore.Intent.PublishAssemble(assemble))
+                            store.labels.collect {
+                                if (it is Label.PublishedAssemble) {
+                                    showPublishAssembleProgressIndicator = false
+                                    store.accept(
+                                        AssembleStore.Intent.SetCurrentAssemble(
+                                            assemble.copy(assembleId = it.id)
+                                        )
+                                    )
+                                    onNavigateToSoundWindow()
+                                }
+                            }
+
+                        }
+                        Box(
+                            modifier = Modifier.width(200.dp).height(140.dp).background(
+                                color = MaterialTheme.colorScheme.surface,
+                                shape = RoundedCornerShape(10.dp)
+                            ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                                Spacer(Modifier.height(6.dp))
+                                Text(
+                                    "Сохраняю сборку...",
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+
+                        }
+                    }
+                }
+            }
+
             Scaffold(
                 modifier = Modifier.width(900.dp),
                 scaffoldState = rememberScaffoldState(),
@@ -90,69 +154,17 @@ fun AssembleScreen(
                             )
                         },
                         onMicClick = {
-
-                            soundPageExpanded = true
-                            store.accept(AssembleStore.Intent.PublishAssemble(assemble))
-                            scope.launch {
-                                store.labels.collect {
-                                    if (it is AssembleStore.Label.PublishedAssemble) {
-                                        store.accept(AssembleStore.Intent.GenerateSoundById(it.id))
-                                    }
-                                    if (it is AssembleStore.Label.GeneratedSound) {
-                                        store.accept(AssembleStore.Intent.SetCurrentAssemble(it.assemble))
-                                        soundPageExpanded = false
-
-                                    }
-
-                                }
-                            }
-
+                            showSaveDialog = true
                         },
-                        onControlClick = { println("playing"); player.play(url = assemble.linkToSound!!) },
-                        showControls = assemble.linkToSound != null,
                         modifier = Modifier.fillMaxWidth()
                     )
-
-                    when {
-                        soundPageExpanded -> {
-                            Dialog(
-                                onDismissRequest = { soundPageExpanded = false }
-                            ) {
-
-
-                                Box(
-                                    Modifier
-                                        .width(200.dp).height(100.dp)
-                                        .background(
-                                            color = MaterialTheme.colorScheme.surface,
-                                            shape = RoundedCornerShape(10.dp)
-                                        ),
-                                    contentAlignment = Alignment.Center
-
-                                ) {
-                                    CircularProgressIndicator(
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                }
-                            }
-                        }
-                    }
 
 
                 },
                 bottomBar = {
                     Column {
                         AddButton({
-                            assemble.components!!.add(
-                                AssembleComponent(
-                                    -1,
-                                    "",
-                                    1,
-                                    null,
-                                    null,
-                                    true
-                                )
-                            )
+                            assemble.components!!.add(AssembleComponent.new())
                             store.accept(
                                 AssembleStore.Intent.SetCurrentAssemble(assemble)
                             )
@@ -257,10 +269,7 @@ fun AssembleScreen(
                                     )
                                 )
                             },
-                            onPlayButtonClick = { index ->
 
-                                player.play(url = assemble.components[index].linkToSound!!)
-                            },
                             modifier = Modifier.fillMaxWidth(),
                         )
                     } else

@@ -9,3 +9,8 @@ object HomeScreenRoute
 data class AssembleScreenRoute(
     val assembleId: Long? = null
 )
+
+@Serializable
+data class SoundWindowRoute(
+    val assembleId: Long? = null
+)

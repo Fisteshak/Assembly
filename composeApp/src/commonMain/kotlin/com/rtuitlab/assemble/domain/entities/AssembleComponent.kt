@@ -10,7 +10,18 @@ data class AssembleComponent(
     val linkToPhoto: String?,
     val linkToSound: String?,
     val isEdited: Boolean
-)
+) {
+    companion object {
+        fun new() = AssembleComponent(
+            -1,
+            "",
+            1,
+            null,
+            null,
+            true
+        )
+    }
+}
 
 fun FullAssembleComponentDataDTO.toAssembleComponent(): AssembleComponent {
     return AssembleComponent(

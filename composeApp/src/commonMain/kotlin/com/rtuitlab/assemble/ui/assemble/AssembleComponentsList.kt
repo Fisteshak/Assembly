@@ -32,7 +32,6 @@ fun AssembleComponentsList(
     onMenuComponentClick: (Int, Component) -> Unit,
     onMenuDismissRequest: () -> Unit,
     onDeleteClick: (Int) -> Unit,
-    onPlayButtonClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val store: AssembleStore = getKoin().get()
@@ -57,7 +56,6 @@ fun AssembleComponentsList(
                             onDeleteClick = { onDeleteClick(index) },
                             onMenuDismissRequest = { onMenuDismissRequest() },
                             onMenuComponentClick = { onMenuComponentClick(index, it) },
-                            onPlayButtonClick = { onPlayButtonClick(index) },
                             backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                             textColor = MaterialTheme.colorScheme.onPrimaryContainer,
                             modifier = Modifier.padding(end = 20.dp)

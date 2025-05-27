@@ -19,14 +19,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.dialog
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.rtuitlab.assemble.AssembleStore
 import com.rtuitlab.assemble.di.koinModule
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.ui.assemble.AssembleScreen
 import com.rtuitlab.assemble.ui.home.HomeScreen
+import com.rtuitlab.assemble.ui.sound.SoundWindow
 import com.rtuitlab.assemble.ui.theme.AppTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import org.koin.compose.getKoin
 import org.koin.core.context.startKoin
 
@@ -105,7 +108,10 @@ fun App(navController: NavHostController) {
                     composable<HomeScreenRoute> {
 
                         LaunchedEffect(Unit) {
-                            store.accept(AssembleStore.Intent.FetchAssemblies)
+                            while (true) {
+                                store.accept(AssembleStore.Intent.FetchAssemblies)
+                                delay(5000)
+                            }
                         }
 
                         HomeScreen(
@@ -125,6 +131,19 @@ fun App(navController: NavHostController) {
                                     launchSingleTop = true
                                 }
                             },
+                            onNavigateToSoundWindow = {
+                                navController.navigate(SoundWindowRoute(null)) {
+                                    launchSingleTop = true
+
+                                }
+                            }
+                        )
+                    }
+                    // this dialog shouldn't be separate destination, but anyway it works
+                    dialog<SoundWindowRoute> {
+                        SoundWindow(
+                            onNavigateBack = { navController.popBackStack() },
+                            modifier = Modifier
                         )
                     }
                 }

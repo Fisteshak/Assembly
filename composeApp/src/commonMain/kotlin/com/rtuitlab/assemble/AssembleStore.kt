@@ -52,6 +52,10 @@ internal interface AssembleStore : Store<Intent, State, Label> {
             val assembleId: Long
         ) : Intent
 
+        /**
+         * generates sound for assemble,
+         * sends GeneratedSound label when completed
+         */
         data class GenerateSoundById(
             val assembleId: Long
         ) : Intent
@@ -67,7 +71,7 @@ internal interface AssembleStore : Store<Intent, State, Label> {
         data class PublishedAssemble(val id: Long) : Label
 
         /**
-         * assemble is null if sound wasn't generated before timeout
+         * @param assemble assemble with generated sound, or null if sound wasn't generated
          */
         data class GeneratedSound(val assemble: Assemble?) : Label
 
@@ -162,6 +166,7 @@ internal class AssembleStoreFactory(
                         } else {
                             createAssembleUseCase(intent.value)
                         }
+
                         publish(Label.PublishedAssemble(assembleId))
                     }
                 }
@@ -172,6 +177,7 @@ internal class AssembleStoreFactory(
                         forward(Action.FetchAssemblies)
                     }
                 }
+
 
                 is Intent.GenerateSoundById -> {
                     scope.launch {

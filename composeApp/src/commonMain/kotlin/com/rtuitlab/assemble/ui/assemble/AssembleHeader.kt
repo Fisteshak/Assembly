@@ -32,8 +32,7 @@ import androidx.compose.ui.unit.dp
 import assembly.composeapp.generated.resources.Res
 import assembly.composeapp.generated.resources.edit_assemble_icon
 import assembly.composeapp.generated.resources.edit_instruction_icon
-import assembly.composeapp.generated.resources.mic_icon
-import assembly.composeapp.generated.resources.play_icon
+import assembly.composeapp.generated.resources.volume_icon
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -43,8 +42,6 @@ fun AssembleHeader(
     onTitleChange: (String) -> Unit,
     onInstructionChange: (String) -> Unit,
     onMicClick: () -> Unit,
-    onControlClick: () -> Unit,
-    showControls: Boolean,
     modifier: Modifier = Modifier
 ) {
     var showNameDialog by remember { mutableStateOf(false) }
@@ -118,30 +115,12 @@ fun AssembleHeader(
 
             ) {
                 Icon(
-                    painter = painterResource(Res.drawable.mic_icon),
+                    painter = painterResource(Res.drawable.volume_icon),
                     contentDescription = null,
                     tint = Color.Unspecified
                 )
             }
-            Spacer(modifier = Modifier.width(10.dp))
 
-            if (showControls)
-                IconButton(
-                    onClick = onControlClick,
-                    modifier = Modifier
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            shape = CircleShape
-                        )
-                        .requiredWidth(48.dp)
-
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.play_icon),
-                        contentDescription = null,
-                        tint = Color.Unspecified
-                    )
-                }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
