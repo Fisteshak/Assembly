@@ -5,17 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.dp
-import com.rtuitlab.assemble.domain.entities.Assemble
 
 
 @Composable
@@ -40,7 +35,7 @@ fun <T> Grid(
             if (index < items.size)
                 content(items[index])
             else
-                PlaceholderAssembleCard()
+                PlaceholderCard()
 
         }
     }

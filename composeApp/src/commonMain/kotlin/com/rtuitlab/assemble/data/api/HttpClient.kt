@@ -1,4 +1,4 @@
-package com.rtuitlab.assemble.data
+package com.rtuitlab.assemble.data.api
 
 import com.rtuitlab.assemble.data.entities.TokenInfo
 import com.rtuitlab.assemble.data.entities.UserInDTO
@@ -21,12 +21,13 @@ import kotlinx.serialization.json.Json
 // TODO переместить в локальный файл?
 private const val BASE_URL = "https://assemble.rtuitlab.dev/api/v1/"
 
+
 var tokens: BearerTokens? = null
 var user: UserInDTO? = null
 
 expect fun httpClient(
     config: HttpClientConfig<*>.() -> Unit = {
-
+        expectSuccess = true
         install(Auth) {
             bearer {
                 loadTokens {
@@ -66,5 +67,4 @@ suspend fun login(client: HttpClient, user: UserInDTO): TokenInfo {
         setBody(user)
     }
     return response.body<TokenInfo>()
-
 }

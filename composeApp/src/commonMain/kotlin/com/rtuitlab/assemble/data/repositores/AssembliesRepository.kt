@@ -1,5 +1,6 @@
 package com.rtuitlab.assemble.data.repositores
 
+import com.rtuitlab.assemble.data.api.AssembleApi
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.domain.entities.Component
 import com.rtuitlab.assemble.domain.entities.toAssemble

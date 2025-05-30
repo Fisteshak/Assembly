@@ -1,13 +1,13 @@
 package com.rtuitlab.assemble.ui
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
@@ -25,11 +25,11 @@ import com.rtuitlab.assemble.AssembleStore
 import com.rtuitlab.assemble.di.koinModule
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.ui.assemble.AssembleScreen
+import com.rtuitlab.assemble.ui.container.ContainerScreen
 import com.rtuitlab.assemble.ui.home.HomeScreen
 import com.rtuitlab.assemble.ui.sound.SoundWindow
 import com.rtuitlab.assemble.ui.theme.AppTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import org.koin.compose.getKoin
 import org.koin.core.context.startKoin
 
@@ -100,26 +100,31 @@ fun App(navController: NavHostController) {
 
                 NavHost(
                     navController, startDestination = HomeScreenRoute,
-                    enterTransition = { EnterTransition.None },
-                    exitTransition = { ExitTransition.None },
-                    popEnterTransition = { EnterTransition.None },
-                    popExitTransition = { ExitTransition.None },
+                    enterTransition = { fadeIn(tween(150)) },
+                    exitTransition = { fadeOut(tween(150)) },
+                    popEnterTransition = { fadeIn(tween(150)) },
+                    popExitTransition = { fadeOut(tween(150)) },
                 ) {
                     composable<HomeScreenRoute> {
 
-                        LaunchedEffect(Unit) {
-                            while (true) {
-                                store.accept(AssembleStore.Intent.FetchAssemblies)
-                                delay(5000)
-                            }
-                        }
+//                        LaunchedEffect(Unit) {
+//                            while (true) {
+//                                store.accept(AssembleStore.Intent.FetchAssemblies)
+//                                delay(5000)
+//                            }
+//                        }
 
                         HomeScreen(
                             onAssembleClick = { id ->
-
                                 navController.navigate(AssembleScreenRoute(id)) {
                                     launchSingleTop = true
                                 }
+                            },
+                            onContainerClick = { number ->
+                                navController.navigate(ContainerScreenRoute) {
+                                    launchSingleTop = true
+                                }
+
                             }
                         )
                     }
@@ -142,6 +147,13 @@ fun App(navController: NavHostController) {
                     // this dialog shouldn't be separate destination, but anyway it works
                     dialog<SoundWindowRoute> {
                         SoundWindow(
+                            onNavigateBack = { navController.popBackStack() },
+                            modifier = Modifier
+                        )
+                    }
+
+                    composable<ContainerScreenRoute> {
+                        ContainerScreen(
                             onNavigateBack = { navController.popBackStack() },
                             modifier = Modifier
                         )

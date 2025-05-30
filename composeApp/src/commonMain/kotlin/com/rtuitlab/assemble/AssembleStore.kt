@@ -112,8 +112,8 @@ internal class AssembleStoreFactory(
     }
 
     private sealed interface Action {
-        object FetchAssemblies : Action
-        object FetchComponents : Action
+        data object FetchAssemblies : Action
+        data object FetchComponents : Action
     }
 
     private sealed interface Msg {
@@ -139,8 +139,6 @@ internal class AssembleStoreFactory(
         val generateSoundByIdUseCase: GenerateSoundByIdUseCase,
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
         override fun executeIntent(intent: Intent) {
-//            println("executor got intent: $intent")
-
             when (intent) {
                 is Intent.FetchAssemblies -> fetchAssemblies()
                 is Intent.FetchAssembleById -> fetchAssembleById(intent.id)

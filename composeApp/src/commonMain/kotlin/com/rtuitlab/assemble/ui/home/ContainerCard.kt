@@ -31,12 +31,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import assembly.composeapp.generated.resources.Res
 import assembly.composeapp.generated.resources.trash_icon
-import com.rtuitlab.assemble.domain.entities.Assemble
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun AssembleCard(
-    assemble: Assemble,
+fun ContainerCard(
+    id: String,
+    name: String,
     onClick: () -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier,
@@ -56,7 +56,7 @@ fun AssembleCard(
     ) {
 
         Column(
-            modifier = Modifier .padding(10.dp)
+            modifier = Modifier.padding(10.dp)
 
         ) {
             Row(
@@ -65,7 +65,7 @@ fun AssembleCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "№${assemble.assembleId}",
+                    text = "№${id}",
 
                     style = MaterialTheme.typography.titleMedium,
                     color = contentColor
@@ -83,7 +83,7 @@ fun AssembleCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = assemble.name,
+                text = name,
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
                 color = contentColor,
@@ -94,7 +94,7 @@ fun AssembleCard(
     when {
         showDeleteDialog -> {
             DeleteDialog(
-                assemble.name,
+                name,
                 onConfirmation = { showDeleteDialog = false; onDelete() },
                 onDismissRequest = { showDeleteDialog = false }
             )
@@ -103,3 +103,7 @@ fun AssembleCard(
 }
 
 
+@Composable
+fun PlaceholderContainerCard(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.height(120.dp).width(190.dp))
+}

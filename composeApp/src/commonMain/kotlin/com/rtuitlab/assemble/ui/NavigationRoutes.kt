@@ -14,3 +14,6 @@ data class AssembleScreenRoute(
 data class SoundWindowRoute(
     val assembleId: Long? = null
 )
+
+@Serializable
+data object ContainerScreenRoute
