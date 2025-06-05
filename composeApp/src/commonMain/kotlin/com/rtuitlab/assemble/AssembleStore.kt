@@ -12,15 +12,16 @@ import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import com.rtuitlab.assemble.AssembleStore.Intent
 import com.rtuitlab.assemble.AssembleStore.Label
 import com.rtuitlab.assemble.AssembleStore.State
+import com.rtuitlab.assemble.data.RequestResult
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.domain.entities.Component
-import com.rtuitlab.assemble.domain.usecases.CreateAssembleUseCase
-import com.rtuitlab.assemble.domain.usecases.DeleteAssembleByIdUseCase
 import com.rtuitlab.assemble.domain.usecases.GenerateSoundByIdUseCase
-import com.rtuitlab.assemble.domain.usecases.GetAssembleByIdUseCase
-import com.rtuitlab.assemble.domain.usecases.GetAssembliesUseCase
-import com.rtuitlab.assemble.domain.usecases.GetComponentsUseCase
-import com.rtuitlab.assemble.domain.usecases.UpdateAssembleUseCase
+import com.rtuitlab.assemble.domain.usecases.assemblies.CreateAssembleUseCase
+import com.rtuitlab.assemble.domain.usecases.assemblies.DeleteAssembleByIdUseCase
+import com.rtuitlab.assemble.domain.usecases.assemblies.GetAssembleByIdUseCase
+import com.rtuitlab.assemble.domain.usecases.assemblies.GetAssembliesUseCase
+import com.rtuitlab.assemble.domain.usecases.assemblies.UpdateAssembleUseCase
+import com.rtuitlab.assemble.domain.usecases.components.GetComponentsUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -217,8 +218,16 @@ internal class AssembleStoreFactory(
 
         private fun fetchComponents() {
             scope.launch {
-                val components = Msg.SetComponents(getComponentsUseCase().toMutableStateList())
-                dispatch(components)
+                val result: RequestResult<List<Component>> = getComponentsUseCase()
+                when (result) {
+                    is RequestResult.Success -> {
+                        dispatch(
+                            Msg.SetComponents(result.data.toMutableStateList())
+                        )
+                    }
+
+                    is RequestResult.Failure -> TODO()
+                }
             }
         }
 

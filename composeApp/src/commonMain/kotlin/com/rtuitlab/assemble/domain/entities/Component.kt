@@ -7,7 +7,11 @@ data class Component(
     val name: String,
     val linkToImage: String? = null,
     val containers: List<String>? // TODO replace string with container type!
-)
+) {
+    companion object {
+        fun createEmpty(): Component = Component(-1, "", null, null)
+    }
+}
 
 fun ComponentOutDTO.toComponent(): Component {
     return Component(

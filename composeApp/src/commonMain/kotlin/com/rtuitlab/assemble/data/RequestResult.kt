@@ -1,4 +1,4 @@
-package com.rtuitlab.assemble.data.api
+package com.rtuitlab.assemble.data
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -12,11 +12,11 @@ import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 
-sealed class AppResult<out T> {
-    data class Success<out T>(val data: T) : AppResult<T>()
-    data class Failure(val error: AppError) : AppResult<Nothing>()
+sealed class RequestResult<out T> {
+    data class Success<out T>(val data: T) : RequestResult<T>()
+    data class Failure(val error: RequestError) : RequestResult<Nothing>()
 
-    fun <R> transform(block: (T) -> R): AppResult<R> = when (this) {
+    fun <R> transform(block: (T) -> R): RequestResult<R> = when (this) {
         is Success -> Success(block(this.data))
         is Failure -> Failure(this.error)
     }
@@ -25,29 +25,29 @@ sealed class AppResult<out T> {
 
 suspend inline fun <reified T> HttpClient.safeRequest(
     block: HttpRequestBuilder.() -> Unit,
-): AppResult<T> {
+): RequestResult<T> {
     return try {
         val response = request { block() }
-        AppResult.Success(response.body())
+        RequestResult.Success(response.body())
     } catch (e: ClientRequestException) {
-        AppResult.Failure(AppError.ApiError(e.message, e.response.status.value))
+        RequestResult.Failure(RequestError.ApiError(e.message, e.response.status.value))
     } catch (e: ServerResponseException) {
-        AppResult.Failure(AppError.ApiError(e.message, e.response.status.value))
+        RequestResult.Failure(RequestError.ApiError(e.message, e.response.status.value))
     } catch (_: IOException) {
-        AppResult.Failure(AppError.NetworkError)
+        RequestResult.Failure(RequestError.NetworkError)
     } catch (_: SerializationException) {
-        AppResult.Failure(AppError.NetworkError)
+        RequestResult.Failure(RequestError.NetworkError)
     } catch (_: UnresolvedAddressException) {
-        AppResult.Failure(AppError.NetworkError)
+        RequestResult.Failure(RequestError.NetworkError)
     } catch (e: Exception) {
-        AppResult.Failure(AppError.UnknownError(e.message))
+        RequestResult.Failure(RequestError.UnknownError(e.message))
     }
 }
 
 suspend inline fun <reified T> HttpClient.safeGet(
     urlString: String,
     block: HttpRequestBuilder.() -> Unit = {}
-): AppResult<T> = safeRequest {
+): RequestResult<T> = safeRequest {
     url(urlString)
     method = HttpMethod.Companion.Get
     block()
@@ -56,16 +56,17 @@ suspend inline fun <reified T> HttpClient.safeGet(
 suspend inline fun <reified T> HttpClient.safePost(
     urlString: String,
     block: HttpRequestBuilder.() -> Unit = {}
-): AppResult<T> = safeRequest {
+): RequestResult<T> = safeRequest {
     url(urlString)
     method = HttpMethod.Companion.Post
     block()
 }
 
+
 suspend inline fun <reified T> HttpClient.safePatch(
     urlString: String,
     block: HttpRequestBuilder.() -> Unit = {}
-): AppResult<T> = safeRequest {
+): RequestResult<T> = safeRequest {
     url(urlString)
     method = HttpMethod.Companion.Patch
     block()
@@ -74,7 +75,7 @@ suspend inline fun <reified T> HttpClient.safePatch(
 suspend inline fun <reified T> HttpClient.safeDelete(
     urlString: String,
     block: HttpRequestBuilder.() -> Unit = {}
-): AppResult<T> = safeRequest {
+): RequestResult<T> = safeRequest {
     url(urlString)
     method = HttpMethod.Companion.Delete
     block()

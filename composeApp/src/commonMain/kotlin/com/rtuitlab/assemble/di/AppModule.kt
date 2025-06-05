@@ -6,20 +6,24 @@ import com.arkivanov.mvikotlin.logging.logger.Logger
 import com.arkivanov.mvikotlin.logging.store.LoggingStoreFactory
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.rtuitlab.assemble.AssembleStoreFactory
+import com.rtuitlab.assemble.data.WebClient
 import com.rtuitlab.assemble.data.api.AssembleApi
+import com.rtuitlab.assemble.data.api.ComponentApi
 import com.rtuitlab.assemble.data.api.ContainerApi
-import com.rtuitlab.assemble.data.api.WebClient
-import com.rtuitlab.assemble.data.repositores.AssembliesRepository
-import com.rtuitlab.assemble.data.repositores.ContainersRepository
-import com.rtuitlab.assemble.domain.usecases.CreateAssembleUseCase
-import com.rtuitlab.assemble.domain.usecases.DeleteAssembleByIdUseCase
+import com.rtuitlab.assemble.data.repositories.AssembliesRepository
+import com.rtuitlab.assemble.data.repositories.ComponentsRepository
+import com.rtuitlab.assemble.data.repositories.ContainersRepository
 import com.rtuitlab.assemble.domain.usecases.GenerateSoundByIdUseCase
-import com.rtuitlab.assemble.domain.usecases.GetAssembleByIdUseCase
-import com.rtuitlab.assemble.domain.usecases.GetAssembliesUseCase
-import com.rtuitlab.assemble.domain.usecases.GetComponentsUseCase
-import com.rtuitlab.assemble.domain.usecases.GetContainerByNumberUseCase
-import com.rtuitlab.assemble.domain.usecases.GetContainersUseCase
-import com.rtuitlab.assemble.domain.usecases.UpdateAssembleUseCase
+import com.rtuitlab.assemble.domain.usecases.assemblies.CreateAssembleUseCase
+import com.rtuitlab.assemble.domain.usecases.assemblies.DeleteAssembleByIdUseCase
+import com.rtuitlab.assemble.domain.usecases.assemblies.GetAssembleByIdUseCase
+import com.rtuitlab.assemble.domain.usecases.assemblies.GetAssembliesUseCase
+import com.rtuitlab.assemble.domain.usecases.assemblies.UpdateAssembleUseCase
+import com.rtuitlab.assemble.domain.usecases.components.GetComponentsUseCase
+import com.rtuitlab.assemble.domain.usecases.containers.CreateContainerUseCase
+import com.rtuitlab.assemble.domain.usecases.containers.GetContainerByNumberUseCase
+import com.rtuitlab.assemble.domain.usecases.containers.GetContainersUseCase
+import com.rtuitlab.assemble.domain.usecases.containers.UpdateContainerByIdUseCase
 import com.rtuitlab.assemble.ui.container.store.ContainerStoreFactory
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -28,22 +32,29 @@ import org.koin.dsl.module
 val koinModule = module {
 
     singleOf(::WebClient)
-
+    // api
     singleOf(::AssembleApi)
     singleOf(::ContainerApi)
-
+    singleOf(::ComponentApi)
+    // repository
     singleOf(::AssembliesRepository)
     singleOf(::ContainersRepository)
-
+    singleOf(::ComponentsRepository)
+    // usecases assemble
     singleOf(::CreateAssembleUseCase)
     singleOf(::UpdateAssembleUseCase)
     singleOf(::GetAssembleByIdUseCase)
     singleOf(::DeleteAssembleByIdUseCase)
     singleOf(::GetAssembliesUseCase)
-    singleOf(::GetComponentsUseCase)
-    singleOf(::GenerateSoundByIdUseCase)
+    // usecases container
     singleOf(::GetContainersUseCase)
     singleOf(::GetContainerByNumberUseCase)
+    singleOf(::CreateContainerUseCase)
+    singleOf(::UpdateContainerByIdUseCase)
+    // usecases component
+    singleOf(::GetComponentsUseCase)
+    // usecases sound
+    singleOf(::GenerateSoundByIdUseCase)
 
     single {
         AssembleStoreFactory(
@@ -97,6 +108,9 @@ val koinModule = module {
             ),
             getContainersUseCase = get(),
             getContainerByNumberUseCase = get(),
+            getComponentsUseCase = get(),
+            createContainerUseCase = get(),
+            updateContainerUseCase = get(),
         ).create()
     }
 

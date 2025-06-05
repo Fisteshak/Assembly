@@ -97,7 +97,7 @@ fun HomeScreen(
                     content = { item ->
                         ContainerCard(
                             id = item.number,
-                            name = "${item.amount} деталей",
+                            name = item.formatAmount(),
                             onClick = {
                                 containerStore.accept(
                                     ContainerStore.Intent.SetCurrentContainer(null)

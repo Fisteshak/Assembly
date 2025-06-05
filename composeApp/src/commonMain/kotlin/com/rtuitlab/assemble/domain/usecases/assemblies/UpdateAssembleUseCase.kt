@@ -1,6 +1,6 @@
-package com.rtuitlab.assemble.domain.usecases
+package com.rtuitlab.assemble.domain.usecases.assemblies
 
-import com.rtuitlab.assemble.data.repositores.AssembliesRepository
+import com.rtuitlab.assemble.data.repositories.AssembliesRepository
 import com.rtuitlab.assemble.domain.entities.Assemble
 
 class UpdateAssembleUseCase(

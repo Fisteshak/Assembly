@@ -1,5 +1,6 @@
 package com.rtuitlab.assemble.data.api
 
+import com.rtuitlab.assemble.data.WebClient
 import com.rtuitlab.assemble.data.entities.AssembleForListOutDTO
 import com.rtuitlab.assemble.data.entities.AssembleOutDTO
 import com.rtuitlab.assemble.data.entities.ComponentOutDTO

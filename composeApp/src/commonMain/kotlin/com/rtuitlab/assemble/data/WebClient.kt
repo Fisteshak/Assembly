@@ -1,4 +1,4 @@
-package com.rtuitlab.assemble.data.api
+package com.rtuitlab.assemble.data
 
 import io.ktor.client.HttpClient
 

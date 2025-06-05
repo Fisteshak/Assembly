@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
@@ -24,8 +25,11 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.rtuitlab.assemble.AssembleStore
 import com.rtuitlab.assemble.di.koinModule
 import com.rtuitlab.assemble.domain.entities.Assemble
+import com.rtuitlab.assemble.domain.entities.Component
+import com.rtuitlab.assemble.domain.entities.Container
 import com.rtuitlab.assemble.ui.assemble.AssembleScreen
 import com.rtuitlab.assemble.ui.container.ContainerScreen
+import com.rtuitlab.assemble.ui.container.store.ContainerStore
 import com.rtuitlab.assemble.ui.home.HomeScreen
 import com.rtuitlab.assemble.ui.sound.SoundWindow
 import com.rtuitlab.assemble.ui.theme.AppTheme
@@ -57,9 +61,10 @@ fun App(navController: NavHostController) {
 
 
     AppTheme(darkTheme = false) {
-        val store: AssembleStore = getKoin().get()
-        val uiState by store.stateFlow.collectAsStateWithLifecycle()
-        val assemblies = uiState.assemblies
+        val assembleStore: AssembleStore = getKoin().get()
+        val assembleUiState by assembleStore.stateFlow.collectAsStateWithLifecycle()
+        val containerStore: ContainerStore = getKoin().get()
+        val containerUiState by containerStore.stateFlow.collectAsStateWithLifecycle()
         Surface(modifier = Modifier.fillMaxSize()) {
             val backStack = navController.currentBackStack
             val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -81,14 +86,33 @@ fun App(navController: NavHostController) {
                             mutableStateListOf()
                         )
 
-                        store.accept(AssembleStore.Intent.SetCurrentAssemble(assemble))
+                        assembleStore.accept(AssembleStore.Intent.SetCurrentAssemble(assemble))
 
                         navController.navigate(AssembleScreenRoute(null)) {
                             launchSingleTop = true
                         }
 
                     },
-                    onContainerClick = {},
+                    onContainerClick = {
+                        val container = Container(
+                            "", "", 1, -1
+                        )
+                        val currentContainer = ContainerStore.State.CurrentContainer(
+                            container,
+                            Component.createEmpty()
+                        )
+
+                        containerStore.accept(ContainerStore.Intent.SetExpectedContainerNumber(null))
+                        containerStore.accept(
+                            ContainerStore.Intent.SetCurrentContainer(
+                                currentContainer
+                            )
+                        )
+
+                        navController.navigate(ContainerScreenRoute) {
+                            launchSingleTop = true
+                        }
+                    },
                     onQrCodeClick = {},
                     onBackClick = if (shouldShowBackButton) {
                         {
@@ -107,12 +131,10 @@ fun App(navController: NavHostController) {
                 ) {
                     composable<HomeScreenRoute> {
 
-//                        LaunchedEffect(Unit) {
-//                            while (true) {
-//                                store.accept(AssembleStore.Intent.FetchAssemblies)
-//                                delay(5000)
-//                            }
-//                        }
+                        LaunchedEffect(Unit) {
+                            assembleStore.accept(AssembleStore.Intent.FetchAssemblies)
+                            containerStore.accept(ContainerStore.Intent.GetContainers())
+                        }
 
                         HomeScreen(
                             onAssembleClick = { id ->

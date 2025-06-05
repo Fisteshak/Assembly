@@ -1,4 +1,4 @@
-package com.rtuitlab.assemble.data.repositores
+package com.rtuitlab.assemble.data.repositories
 
 import com.rtuitlab.assemble.data.api.AssembleApi
 import com.rtuitlab.assemble.domain.entities.Assemble

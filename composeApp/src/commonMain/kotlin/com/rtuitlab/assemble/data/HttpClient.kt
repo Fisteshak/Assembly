@@ -1,4 +1,4 @@
-package com.rtuitlab.assemble.data.api
+package com.rtuitlab.assemble.data
 
 import com.rtuitlab.assemble.data.entities.TokenInfo
 import com.rtuitlab.assemble.data.entities.UserInDTO

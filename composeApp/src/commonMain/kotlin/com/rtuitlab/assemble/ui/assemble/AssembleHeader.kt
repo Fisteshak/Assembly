@@ -33,6 +33,7 @@ import assembly.composeapp.generated.resources.Res
 import assembly.composeapp.generated.resources.edit_assemble_icon
 import assembly.composeapp.generated.resources.edit_instruction_icon
 import assembly.composeapp.generated.resources.volume_icon
+import com.rtuitlab.assemble.ui.common.dialogs.EditSingleLineStringDialog
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -134,8 +135,9 @@ fun AssembleHeader(
 
 
         if (showNameDialog) {
-            EditNameDialog(
-                currentName = title,
+            EditSingleLineStringDialog(
+                currentString = title,
+                label = "Название",
                 onDismissRequest = { showNameDialog = false },
                 onConfirm = { onTitleChange(it); showNameDialog = false }
             )

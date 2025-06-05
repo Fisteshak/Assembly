@@ -1,4 +1,4 @@
-package com.rtuitlab.assemble.ui.assemble
+package com.rtuitlab.assemble.ui.common.dialogs
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,10 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun EditNameDialog(
-    currentName: String, onDismissRequest: () -> Unit, onConfirm: (String) -> Unit
+fun EditSingleLineStringDialog(
+    currentString: String,
+    label: String,
+    onDismissRequest: () -> Unit,
+    onConfirm: (String) -> Unit,
+    confirmText: String = "Сохранить",
+    dismissText: String = "Отмена",
 ) {
-    var nameInputText by remember { mutableStateOf(currentName) }
+    var nameInputText by remember { mutableStateOf(currentString) }
 
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -35,7 +40,7 @@ fun EditNameDialog(
                 OutlinedTextField(
                     value = nameInputText,
                     onValueChange = { nameInputText = it },
-                    label = { Text("Название") },
+                    label = { Text(label) },
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.fillMaxWidth(),

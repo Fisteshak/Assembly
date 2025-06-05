@@ -21,6 +21,24 @@ data class AssembleComponent(
             true
         )
     }
+
+    fun formatAmount(): String {
+        val n = amount
+        val end = n % 10
+        val end2 = n % 100
+
+        return "$n штук" +
+                if (end2 in 11..19)
+                    ""
+                else
+                    when (end) {
+                        0L, 5L, 6L, 7L, 8L, 9L -> ""
+                        1L -> "a"
+                        2L, 3L, 4L -> "и"
+                        else -> ""
+                    }
+    }
+
 }
 
 fun FullAssembleComponentDataDTO.toAssembleComponent(): AssembleComponent {

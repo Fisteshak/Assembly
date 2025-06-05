@@ -1,6 +1,6 @@
 package com.rtuitlab.assemble.domain.usecases
 
-import com.rtuitlab.assemble.data.repositores.AssembliesRepository
+import com.rtuitlab.assemble.data.repositories.AssembliesRepository
 
 class GenerateSoundByIdUseCase(
     val assembliesRepository: AssembliesRepository
