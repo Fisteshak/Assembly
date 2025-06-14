@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.rtuitlab.assemble.domain.entities.Component
-import com.rtuitlab.assemble.ui.assemble.QuantitySelector
+import com.rtuitlab.assemble.ui.common.QuantitySelector
 
 @Composable
 fun ContainerRow(

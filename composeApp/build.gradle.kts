@@ -7,17 +7,13 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.serialization)
-//    id("org.openjfx.javafxplugin") version "0.1.0"
+
 }
 
-//javafx {
-//    version = "19.0.1"
-//    modules = listOf("javafx.controls", "javafx.fxml", "javafx.swing", "javafx.base", "javafx.media", "javafx.web")
-//}
+
 
 compose.resources {
     publicResClass = true
-    // packageOfResClass = "org.sample.library.resources"
     generateResClass = always
 }
 
@@ -92,6 +88,9 @@ kotlin {
             implementation("org.openjfx:javafx-swing:21:${fxSuffix}")
             implementation("org.openjfx:javafx-web:21:${fxSuffix}")
             implementation("org.openjfx:javafx-media:21:${fxSuffix}")
+
+            // For QR codes
+            implementation("io.github.alexzhirkevich:qrose:1.0.1")
 
         }
 

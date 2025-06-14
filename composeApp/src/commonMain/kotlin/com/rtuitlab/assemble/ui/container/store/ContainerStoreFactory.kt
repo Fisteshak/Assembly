@@ -10,12 +10,14 @@ import com.rtuitlab.assemble.domain.entities.Component
 import com.rtuitlab.assemble.domain.entities.Container
 import com.rtuitlab.assemble.domain.usecases.components.GetComponentsUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.CreateContainerUseCase
+import com.rtuitlab.assemble.domain.usecases.containers.DeleteContainerByNumberUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.GetContainerByNumberUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.GetContainersUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.UpdateContainerByIdUseCase
 import com.rtuitlab.assemble.ui.container.store.ContainerStore.Intent
 import com.rtuitlab.assemble.ui.container.store.ContainerStore.Label
 import com.rtuitlab.assemble.ui.container.store.ContainerStore.State
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
@@ -26,6 +28,7 @@ internal class ContainerStoreFactory(
     private val getComponentsUseCase: GetComponentsUseCase,
     private val createContainerUseCase: CreateContainerUseCase,
     private val updateContainerUseCase: UpdateContainerByIdUseCase,
+    private val deleteContainerByNumberUseCase: DeleteContainerByNumberUseCase,
 ) {
 
     private sealed interface Action {
@@ -41,7 +44,6 @@ internal class ContainerStoreFactory(
 
         //        data class SetContainerComponent(val component: Component) : Msg
         data class SetIsSaving(val value: Boolean) : Msg
-        data class SetExpectedContainerNumber(val value: String?) : Msg
     }
 
     fun create(): ContainerStore =
@@ -51,10 +53,14 @@ internal class ContainerStoreFactory(
                 initialState = State(),
                 bootstrapper = SimpleBootstrapper(Action.GetContainers(), Action.GetComponents),
                 executorFactory = coroutineExecutorFactory {
+                    // any coroutine that changes currentContainer (for example GetCurrentContainerByNumber) should be stored here.
+                    // If another such coroutine is created, it should cancel or join existing one
+                    // so at any point there may be only one suspending job that will change currentContainer (like getting, saving, etc)
+                    var currentJob: Job? = null
 
                     onIntent<Intent.GetContainers> {
-
                         launch {
+
                             val result: RequestResult<List<Container>> =
                                 getContainersUseCase(it.room)
                             when (result) {
@@ -64,18 +70,15 @@ internal class ContainerStoreFactory(
                         }
                     }
 
-                    onIntent<Intent.GetAndSetCurrentContainerByNumber> {
-                        launch {
+                    onIntent<Intent.GetCurrentContainerByNumber> {
 
-                            // set container number we are expecting to get
-                            dispatch(
-                                Msg.SetExpectedContainerNumber(
-                                    it.number
-                                )
-                            )
+                        currentJob?.cancel()
+
+                        currentJob = launch {
 
                             val containerResult: RequestResult<Container> =
                                 getContainerByNumberUseCase(it.number)
+
 
                             when (containerResult) {
                                 is RequestResult.Failure -> {
@@ -83,40 +86,31 @@ internal class ContainerStoreFactory(
                                 }
 
                                 is RequestResult.Success -> {
-                                    // if something changed and we are expecting container with another number, do nothing
-                                    if (state().expectedContainerNumber == containerResult.data.number) {
-//                                        dispatch(
-//                                            Msg.SetCurrentContainer(
-//                                                state().currentContainer?.copy(
-//                                                    container = containerResult.data
-//                                                )
-//                                            )
-//                                        )
 
-                                        // getting components
-                                        val componentsResult: RequestResult<List<Component>> =
-                                            getComponentsUseCase()
+                                    // getting components
+                                    val componentsResult: RequestResult<List<Component>> =
+                                        getComponentsUseCase()
 
-                                        when (componentsResult) {
-                                            is RequestResult.Success -> {
-                                                // setting containerComponent
-                                                dispatch(Msg.SetComponents(componentsResult.data))
-                                                dispatch(
-                                                    Msg.SetCurrentContainer(
-                                                        State.CurrentContainer(
-                                                            container = containerResult.data,
-                                                            // TODO handle null-assertion
-                                                            containerComponent = componentsResult.data.find { it.id == containerResult.data.componentId }!!
-                                                        )
+                                    when (componentsResult) {
+                                        is RequestResult.Success -> {
+                                            // setting containerComponent
+                                            dispatch(Msg.SetComponents(componentsResult.data))
+                                            dispatch(
+                                                Msg.SetCurrentContainer(
+                                                    State.CurrentContainer(
+                                                        container = containerResult.data,
+                                                        // TODO handle null-assertion
+                                                        containerComponent = componentsResult.data.find { it.id == containerResult.data.componentId }!!,
+                                                        number = containerResult.data.number
                                                     )
                                                 )
-                                            }
-
-                                            is RequestResult.Failure -> TODO()
+                                            )
                                         }
 
-
+                                        is RequestResult.Failure -> TODO()
                                     }
+
+
                                 }
 
 
@@ -172,10 +166,25 @@ internal class ContainerStoreFactory(
                     }
 
 
-                    onIntent<Intent.UpdateContainer> {
-                        launch {
+                    onIntent<Intent.UpdateCurrentContainerByNumber> {
+
+                        currentJob?.cancel()
+
+                        currentJob = launch {
+
+                            if (it.container.number.isEmpty()) {
+                                state().snackBarHostState.showSnackbar("Номер не может быть пустым.")
+                                return@launch
+                            }
+
+                            if (it.container.componentId == -1L) {
+                                state().snackBarHostState.showSnackbar("Добавьте деталь.")
+                                return@launch
+                            }
+
+
+
                             dispatch(Msg.SetIsSaving(true))
-                            dispatch(Msg.SetExpectedContainerNumber(it.number))
 
                             var result: RequestResult<Container> =
                                 updateContainerUseCase(it.container, it.number)
@@ -184,17 +193,15 @@ internal class ContainerStoreFactory(
 
                             when (result) {
                                 is RequestResult.Success -> {
-                                    if (state().expectedContainerNumber == result.data.number)
-                                        dispatch(
-                                            Msg.SetCurrentContainer(
-                                                State.CurrentContainer(
-                                                    result.data,
-                                                    state().components.find { it.id == result.data.componentId }!!
-                                                )
+                                    dispatch(
+                                        Msg.SetCurrentContainer(
+                                            State.CurrentContainer(
+                                                result.data,
+                                                state().components.find { it.id == result.data.componentId }!!,
+                                                number = result.data.number
                                             )
                                         )
-
-
+                                    )
 
                                     state().snackBarHostState.showSnackbar(
                                         "Сохранено",
@@ -221,8 +228,9 @@ internal class ContainerStoreFactory(
                         }
                     }
 
-                    onIntent<Intent.CreateContainer> {
-                        launch {
+                    onIntent<Intent.CreateCurrentContainer> {
+                        currentJob?.cancel()
+                        currentJob = launch {
 
                             if (it.container.number.isEmpty()) {
                                 state().snackBarHostState.showSnackbar("Номер не может быть пустым.")
@@ -230,7 +238,7 @@ internal class ContainerStoreFactory(
                             }
 
                             if (it.container.componentId == -1L) {
-                                state().snackBarHostState.showSnackbar("Компонент не может быть пустым.")
+                                state().snackBarHostState.showSnackbar("Добавьте деталь.")
                                 return@launch
                             }
 
@@ -243,21 +251,18 @@ internal class ContainerStoreFactory(
 
                             when (result) {
                                 is RequestResult.Success -> {
-                                    if (state().expectedContainerNumber == null) {
 
                                         dispatch(
                                             Msg.SetCurrentContainer(
                                                 State.CurrentContainer(
                                                     result.data,
-                                                    state().components.find { it.id == result.data.componentId }!!
+                                                    state().components.find { it.id == result.data.componentId }!!,
+                                                    number = result.data.number
                                                 )
                                             )
                                         )
 
-                                        dispatch(
-                                            Msg.SetExpectedContainerNumber(result.data.number)
-                                        )
-                                    }
+
 
                                     state().snackBarHostState.showSnackbar(
                                         "Сохранено",
@@ -286,9 +291,26 @@ internal class ContainerStoreFactory(
                         }
                     }
 
-                    onIntent<Intent.SetExpectedContainerNumber> {
-                        dispatch(Msg.SetExpectedContainerNumber(it.number))
+                    onIntent<Intent.SetNewCurrentContainer> {
+                        currentJob?.cancel()
+
+                        dispatch(
+                            Msg.SetCurrentContainer(
+                                State.CurrentContainer(
+                                    Container("", "", 1, -1L), Component.createEmpty(), null
+                                )
+                            )
+                        )
                     }
+
+                    onIntent<Intent.DeleteContainerByNumber> {
+                        launch {
+                            deleteContainerByNumberUseCase(it.number)
+                            forward(Action.GetContainers())
+                        }
+                    }
+
+
                 },
                 reducer = { msg ->
                     when (msg) {
@@ -304,7 +326,6 @@ internal class ContainerStoreFactory(
 
                         is Msg.SetIsSaving -> copy(isSaving = msg.value)
 
-                        is Msg.SetExpectedContainerNumber -> copy(expectedContainerNumber = msg.value)
                     }
                 }
             ) {

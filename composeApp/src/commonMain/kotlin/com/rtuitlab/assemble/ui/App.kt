@@ -25,8 +25,6 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.rtuitlab.assemble.AssembleStore
 import com.rtuitlab.assemble.di.koinModule
 import com.rtuitlab.assemble.domain.entities.Assemble
-import com.rtuitlab.assemble.domain.entities.Component
-import com.rtuitlab.assemble.domain.entities.Container
 import com.rtuitlab.assemble.ui.assemble.AssembleScreen
 import com.rtuitlab.assemble.ui.container.ContainerScreen
 import com.rtuitlab.assemble.ui.container.store.ContainerStore
@@ -94,19 +92,9 @@ fun App(navController: NavHostController) {
 
                     },
                     onContainerClick = {
-                        val container = Container(
-                            "", "", 1, -1
-                        )
-                        val currentContainer = ContainerStore.State.CurrentContainer(
-                            container,
-                            Component.createEmpty()
-                        )
 
-                        containerStore.accept(ContainerStore.Intent.SetExpectedContainerNumber(null))
                         containerStore.accept(
-                            ContainerStore.Intent.SetCurrentContainer(
-                                currentContainer
-                            )
+                            ContainerStore.Intent.SetNewCurrentContainer
                         )
 
                         navController.navigate(ContainerScreenRoute) {

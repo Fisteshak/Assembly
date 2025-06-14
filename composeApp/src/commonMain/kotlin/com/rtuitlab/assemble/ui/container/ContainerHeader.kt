@@ -74,7 +74,8 @@ fun ContainerHeader(
                 currentString = number,
                 label = "Контейнер №",
                 onDismissRequest = { showNameDialog = false },
-                onConfirm = { onTitleChange(it); showNameDialog = false }
+                onConfirm = { onTitleChange(it); showNameDialog = false },
+                modifier = Modifier
             )
         }
     }

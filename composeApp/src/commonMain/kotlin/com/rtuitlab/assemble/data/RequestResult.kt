@@ -9,6 +9,7 @@ import io.ktor.client.request.request
 import io.ktor.client.request.url
 import io.ktor.http.HttpMethod
 import io.ktor.util.network.UnresolvedAddressException
+import kotlinx.coroutines.CancellationException
 import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 
@@ -40,7 +41,10 @@ suspend inline fun <reified T> HttpClient.safeRequest(
     } catch (_: UnresolvedAddressException) {
         RequestResult.Failure(RequestError.NetworkError)
     } catch (e: Exception) {
+        if (e is CancellationException) throw (e)
+        print("ktor got unknown exception: ${e.message}")
         RequestResult.Failure(RequestError.UnknownError(e.message))
+
     }
 }
 

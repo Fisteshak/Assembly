@@ -1,6 +1,7 @@
 package com.rtuitlab.assemble.ui.common.dialogs
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,29 +14,38 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun EditSingleLineStringDialog(
     currentString: String,
     label: String,
+    modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     onConfirm: (String) -> Unit,
     confirmText: String = "Сохранить",
     dismissText: String = "Отмена",
 ) {
     var nameInputText by remember { mutableStateOf(currentString) }
-
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
     AlertDialog(
+        modifier = modifier,
         onDismissRequest = onDismissRequest,
 
         title = null, text = {
             Column {
+
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
                     value = nameInputText,
@@ -43,8 +53,9 @@ fun EditSingleLineStringDialog(
                     label = { Text(label) },
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = MaterialTheme.colorScheme.primary)
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
+                        .focusRequester(focusRequester),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(focusedBorderColor = MaterialTheme.colorScheme.primary),
                 )
             }
         }, confirmButton = {

@@ -103,14 +103,18 @@ fun HomeScreen(
                                     ContainerStore.Intent.SetCurrentContainer(null)
                                 )
                                 containerStore.accept(
-                                    ContainerStore.Intent.GetAndSetCurrentContainerByNumber(
+                                    ContainerStore.Intent.GetCurrentContainerByNumber(
                                         item.number
                                     )
                                 )
                                 onContainerClick(item.number)
                             },
                             onDelete = {
-//                            assembleStore.accept(AssembleStore.Intent.DeleteAssembleById(item.assembleId))
+                                containerStore.accept(
+                                    ContainerStore.Intent.DeleteContainerByNumber(
+                                        item.number
+                                    )
+                                )
                             },
                             modifier = Modifier
                         )

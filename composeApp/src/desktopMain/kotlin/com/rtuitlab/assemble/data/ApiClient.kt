@@ -8,6 +8,8 @@ import io.ktor.client.plugins.logging.EMPTY
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import javax.print.PrintService
+import javax.print.PrintServiceLookup
 
 actual fun httpClient(config: HttpClientConfig<*>.() -> Unit) = HttpClient(CIO) {
     config(this)
@@ -31,3 +33,12 @@ actual fun httpClient(config: HttpClientConfig<*>.() -> Unit) = HttpClient(CIO) 
 
     }
 }
+
+fun discoverPrintServices() {
+    val allPrintServices: Array<PrintService> = PrintServiceLookup.lookupPrintServices(null, null)
+
+    for (printService in allPrintServices) {
+        println("Print service name: " + printService.getName())
+    }
+}
+

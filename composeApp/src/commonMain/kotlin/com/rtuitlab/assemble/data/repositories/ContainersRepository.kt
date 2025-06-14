@@ -21,6 +21,10 @@ class ContainersRepository(
         return result.transform { it.toContainer() }
     }
 
+    suspend fun deleteContainerByNumber(number: String): RequestResult<Unit> {
+        return api.deleteContainerByNumber(number)
+    }
+
     suspend fun createContainer(container: Container): RequestResult<Container> {
         val result = api.createContainer(container.toContainerInDTO())
         return result.transform { it.toContainer() }

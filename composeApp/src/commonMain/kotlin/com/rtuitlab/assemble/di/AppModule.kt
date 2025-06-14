@@ -21,6 +21,7 @@ import com.rtuitlab.assemble.domain.usecases.assemblies.GetAssembliesUseCase
 import com.rtuitlab.assemble.domain.usecases.assemblies.UpdateAssembleUseCase
 import com.rtuitlab.assemble.domain.usecases.components.GetComponentsUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.CreateContainerUseCase
+import com.rtuitlab.assemble.domain.usecases.containers.DeleteContainerByNumberUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.GetContainerByNumberUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.GetContainersUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.UpdateContainerByIdUseCase
@@ -51,6 +52,7 @@ val koinModule = module {
     singleOf(::GetContainerByNumberUseCase)
     singleOf(::CreateContainerUseCase)
     singleOf(::UpdateContainerByIdUseCase)
+    singleOf(::DeleteContainerByNumberUseCase)
     // usecases component
     singleOf(::GetComponentsUseCase)
     // usecases sound
@@ -111,6 +113,7 @@ val koinModule = module {
             getComponentsUseCase = get(),
             createContainerUseCase = get(),
             updateContainerUseCase = get(),
+            deleteContainerByNumberUseCase = get(),
         ).create()
     }
 

@@ -12,26 +12,42 @@ internal interface ContainerStore : Store<Intent, State, Label> {
 
     sealed interface Intent {
         /**
-         * gets containers from api and stores them in containers
+         * gets containers from api and stores them in containers. Cancels currentJob if it exists
          */
         data class GetContainers(val room: String? = null) : Intent
 
         /**
-         * gets container by number from api and stores it in currentContainer
+         * gets container by number from api and stores it in currentContainer. Cancels currentJob if it exists
          */
-        data class GetAndSetCurrentContainerByNumber(val number: String) : Intent
+        data class GetCurrentContainerByNumber(val number: String) : Intent
 
+        /**
+         * sets currentContainer
+         */
         data class SetCurrentContainer(val container: State.CurrentContainer?) : Intent
 
         data class SetCurrentContainerComponent(val component: Component) : Intent
 
         data object GetComponents : Intent
 
-        data class CreateContainer(val container: Container) : Intent
+        /**
+         * creates new container using api and assigns it to currentContainer. Cancels currentJob if it exists
+         */
+        data class CreateCurrentContainer(val container: Container) : Intent
 
-        data class UpdateContainer(val container: Container, val number: String) : Intent
+        /**
+         * updates container by number using api and assigns it to currentContainer. Cancels currentJob if it exists
+         */
+        data class UpdateCurrentContainerByNumber(val container: Container, val number: String) :
+            Intent
 
-        data class SetExpectedContainerNumber(val number: String?) : Intent
+        /**
+         * assigns new empty container to currentContainer. Cancels currentJob if it exists
+         */
+        data object SetNewCurrentContainer : Intent
+
+        data class DeleteContainerByNumber(val number: String) : Intent
+
     }
 
     data class State(
@@ -40,11 +56,11 @@ internal interface ContainerStore : Store<Intent, State, Label> {
         val components: List<Component> = emptyList(),
         val snackBarHostState: SnackbarHostState = SnackbarHostState(),
         val isSaving: Boolean = false,
-        val expectedContainerNumber: String? = null,
     ) {
         data class CurrentContainer(
             val container: Container,
             val containerComponent: Component,
+            val number: String? // user can change id (number), so this is needed to remember original one. If container is new, than number is null
         )
 
     }

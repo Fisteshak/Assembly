@@ -22,6 +22,7 @@ import com.rtuitlab.assemble.domain.usecases.assemblies.GetAssembleByIdUseCase
 import com.rtuitlab.assemble.domain.usecases.assemblies.GetAssembliesUseCase
 import com.rtuitlab.assemble.domain.usecases.assemblies.UpdateAssembleUseCase
 import com.rtuitlab.assemble.domain.usecases.components.GetComponentsUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -90,6 +91,7 @@ internal class AssembleStoreFactory(
     private val generateSoundByIdUseCase: GenerateSoundByIdUseCase,
 ) {
 
+
     fun create(): AssembleStore {
 
         return object : AssembleStore, Store<Intent, State, Label> by storeFactory.create(
@@ -139,6 +141,9 @@ internal class AssembleStoreFactory(
         val deleteAssembleByIdUseCase: DeleteAssembleByIdUseCase,
         val generateSoundByIdUseCase: GenerateSoundByIdUseCase,
     ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+
+        var currentJob: Job? = null
+
         override fun executeIntent(intent: Intent) {
             when (intent) {
                 is Intent.FetchAssemblies -> fetchAssemblies()
@@ -155,11 +160,12 @@ internal class AssembleStoreFactory(
                 }
 
                 is Intent.SetCurrentAssemble -> {
+                    currentJob?.cancel()
                     dispatch(Msg.SetCurrentAssemble(intent.value))
                 }
 
                 is Intent.PublishAssemble -> {
-                    scope.launch {
+                    currentJob = scope.launch {
                         val assembleId = if (intent.value.assembleId != -1L) {
                             updateAssembleUseCase(intent.value)
                         } else {
@@ -232,8 +238,9 @@ internal class AssembleStoreFactory(
         }
 
         private fun fetchAssembleById(id: Long) {
-            scope.launch {
 
+            currentJob?.cancel()
+            currentJob = scope.launch {
                 val assemble = getAssembleByIdUseCase(id)
                 dispatch(Msg.SetCurrentAssemble(assemble).copy())
             }

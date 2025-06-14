@@ -4,6 +4,7 @@ import com.rtuitlab.assemble.data.RequestResult
 import com.rtuitlab.assemble.data.WebClient
 import com.rtuitlab.assemble.data.entities.ContainerInDTO
 import com.rtuitlab.assemble.data.entities.ContainerOutDTO
+import com.rtuitlab.assemble.data.safeDelete
 import com.rtuitlab.assemble.data.safeGet
 import com.rtuitlab.assemble.data.safePatch
 import com.rtuitlab.assemble.data.safePost
@@ -24,6 +25,10 @@ class ContainerApi(
 
     suspend fun getContainerByNumber(number: String): RequestResult<ContainerOutDTO> {
         return client.safeGet("containers/$number")
+    }
+
+    suspend fun deleteContainerByNumber(number: String): RequestResult<Unit> {
+        return client.safeDelete("containers/$number")
     }
 
     suspend fun createContainer(container: ContainerInDTO): RequestResult<ContainerOutDTO> {
