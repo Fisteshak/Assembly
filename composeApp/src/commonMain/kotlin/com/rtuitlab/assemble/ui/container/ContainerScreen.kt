@@ -38,10 +38,12 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.rtuitlab.assemble.ui.common.QuantitySelector
 import com.rtuitlab.assemble.ui.container.store.ContainerStore
 import com.rtuitlab.assemble.ui.container.store.ContainerStore.Intent
+import io.github.alexzhirkevich.qrose.ImageFormat
 import io.github.alexzhirkevich.qrose.options.QrBrush
 import io.github.alexzhirkevich.qrose.options.QrColors
 import io.github.alexzhirkevich.qrose.options.solid
 import io.github.alexzhirkevich.qrose.rememberQrCodePainter
+import io.github.alexzhirkevich.qrose.toByteArray
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.compose.getKoin
 
@@ -69,10 +71,7 @@ fun ContainerScreen(
         contentAlignment = Alignment.Center
     ) {
 
-        SnackbarHost(
-            hostState = uiState.snackBarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
+
 
         Column(
             modifier = modifier.widthIn(max = 800.dp),
@@ -202,11 +201,13 @@ fun ContainerScreen(
                     }
                 } else {
                     Row {
+                        val qrCode = rememberQrCodePainter(
+                            "https://assemble.rtuitlab.dev/container/${currentContainer.number}",
+                            colors = QrColors(dark = QrBrush.solid(MaterialTheme.colorScheme.primary))
+                        )
+
                         Image(
-                            painter = rememberQrCodePainter(
-                                "https://assemble.rtuitlab.dev/container/${currentContainer.number}",
-                                colors = QrColors(dark = QrBrush.solid(MaterialTheme.colorScheme.primary))
-                            ),
+                            painter = qrCode,
                             contentDescription = "QR code of container",
                             modifier = Modifier.size(220.dp)
                         )
@@ -238,6 +239,15 @@ fun ContainerScreen(
 
                             Button(
                                 onClick = {
+                                    store.accept(
+                                        Intent.Print(
+                                            qrCode.toByteArray(
+                                                qrCode.intrinsicSize.width.toInt(),
+                                                qrCode.intrinsicSize.height.toInt(),
+                                                ImageFormat.PNG
+                                            ).toList()
+                                        )
+                                    )
                                 },
                                 modifier = Modifier,
                                 colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.secondaryContainer),
@@ -293,6 +303,11 @@ fun ContainerScreen(
 
             }
         }
+
+        SnackbarHost(
+            hostState = uiState.snackBarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 

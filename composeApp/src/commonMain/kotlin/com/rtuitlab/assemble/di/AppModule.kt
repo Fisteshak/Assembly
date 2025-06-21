@@ -6,6 +6,7 @@ import com.arkivanov.mvikotlin.logging.logger.Logger
 import com.arkivanov.mvikotlin.logging.store.LoggingStoreFactory
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.rtuitlab.assemble.AssembleStoreFactory
+import com.rtuitlab.assemble.data.PdfPrinter
 import com.rtuitlab.assemble.data.WebClient
 import com.rtuitlab.assemble.data.api.AssembleApi
 import com.rtuitlab.assemble.data.api.ComponentApi
@@ -57,6 +58,8 @@ val koinModule = module {
     singleOf(::GetComponentsUseCase)
     // usecases sound
     singleOf(::GenerateSoundByIdUseCase)
+
+    singleOf(::PdfPrinter)
 
     single {
         AssembleStoreFactory(
@@ -114,6 +117,7 @@ val koinModule = module {
             createContainerUseCase = get(),
             updateContainerUseCase = get(),
             deleteContainerByNumberUseCase = get(),
+            pdfPrinter = get()
         ).create()
     }
 

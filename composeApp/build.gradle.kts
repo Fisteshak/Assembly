@@ -28,6 +28,8 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
+//        useCommonJs()
+
         outputModuleName = "composeApp"
         browser {
             val rootDirPath = project.rootDir.path
@@ -45,7 +47,7 @@ kotlin {
         }
         binaries.executable()
     }
-    
+
     sourceSets {
         val desktopMain by getting
 
@@ -94,10 +96,17 @@ kotlin {
 
         }
 
-        wasmJsMain.dependencies {
-            // ktor js engine
-            implementation("io.ktor:ktor-client-js:3.1.2")
 
+        wasmJsMain {
+            dependencies {
+                // ktor js engine
+                implementation("io.ktor:ktor-client-js:3.1.2")
+                // browser api (for printing)
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:0.3")
+                implementation(npm("is-odd", "3.0.1"))
+//                implementation(npm("is-sorted", "1.0.5"))
+//                implementation(npm("pdfjs", "2.5.3"))
+            }
         }
 
         desktopMain.dependencies {
@@ -109,6 +118,8 @@ kotlin {
             implementation(libs.ktor.client.cio)
             // logging
             implementation("ch.qos.logback:logback-classic:1.5.18")
+            // pdf editing
+            implementation("org.apache.pdfbox:pdfbox:3.0.5")
 
         }
 

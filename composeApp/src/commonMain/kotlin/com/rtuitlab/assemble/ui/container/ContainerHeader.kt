@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -44,13 +44,14 @@ fun ContainerHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Контейнер №$number",
-                style = MaterialTheme.typography.displaySmall
+                text = "Контейнер № $number",
+                style = MaterialTheme.typography.displaySmall,
+                softWrap = false
             )
             Spacer(modifier = Modifier.width(8.dp))
             IconButton(onClick = {
                 showNameDialog = true
-            }, modifier = Modifier.requiredHeight(29.dp)) {
+            }, modifier = Modifier.requiredSize(29.dp)) {
 
                 Icon(
                     painter = painterResource(Res.drawable.edit_assemble_icon),

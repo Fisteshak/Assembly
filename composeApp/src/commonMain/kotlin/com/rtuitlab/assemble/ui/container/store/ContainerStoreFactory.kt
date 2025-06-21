@@ -4,6 +4,7 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.coroutineExecutorFactory
+import com.rtuitlab.assemble.data.PdfPrinter
 import com.rtuitlab.assemble.data.RequestError
 import com.rtuitlab.assemble.data.RequestResult
 import com.rtuitlab.assemble.domain.entities.Component
@@ -29,6 +30,7 @@ internal class ContainerStoreFactory(
     private val createContainerUseCase: CreateContainerUseCase,
     private val updateContainerUseCase: UpdateContainerByIdUseCase,
     private val deleteContainerByNumberUseCase: DeleteContainerByNumberUseCase,
+    private val pdfPrinter: PdfPrinter
 ) {
 
     private sealed interface Action {
@@ -307,6 +309,14 @@ internal class ContainerStoreFactory(
                         launch {
                             deleteContainerByNumberUseCase(it.number)
                             forward(Action.GetContainers())
+                        }
+                    }
+
+                    onIntent<Intent.Print> {
+                        launch {
+                            println(pdfPrinter.getAvailablePrinters())
+                            pdfPrinter.printPdf(it.pngImage.toByteArray())
+
                         }
                     }
 
