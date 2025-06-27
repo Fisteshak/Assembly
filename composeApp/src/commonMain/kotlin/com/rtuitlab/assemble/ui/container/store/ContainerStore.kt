@@ -48,7 +48,7 @@ internal interface ContainerStore : Store<Intent, State, Label> {
 
         data class DeleteContainerByNumber(val number: String) : Intent
 
-        data class Print(val pngImage: List<Byte>) : Intent
+        data class Print(val pngImage: List<Byte>, val name: String) : Intent
 
     }
 

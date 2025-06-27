@@ -1,4 +1,4 @@
-package com.rtuitlab.assemble
+package com.rtuitlab.assemble.ui.assemble
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -9,9 +9,6 @@ import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineBootstrapper
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
-import com.rtuitlab.assemble.AssembleStore.Intent
-import com.rtuitlab.assemble.AssembleStore.Label
-import com.rtuitlab.assemble.AssembleStore.State
 import com.rtuitlab.assemble.data.RequestResult
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.domain.entities.Component
@@ -22,6 +19,9 @@ import com.rtuitlab.assemble.domain.usecases.assemblies.GetAssembleByIdUseCase
 import com.rtuitlab.assemble.domain.usecases.assemblies.GetAssembliesUseCase
 import com.rtuitlab.assemble.domain.usecases.assemblies.UpdateAssembleUseCase
 import com.rtuitlab.assemble.domain.usecases.components.GetComponentsUseCase
+import com.rtuitlab.assemble.ui.assemble.AssembleStore.Intent
+import com.rtuitlab.assemble.ui.assemble.AssembleStore.Label
+import com.rtuitlab.assemble.ui.assemble.AssembleStore.State
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

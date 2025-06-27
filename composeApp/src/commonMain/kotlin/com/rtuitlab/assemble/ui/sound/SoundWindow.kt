@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.rtuitlab.assemble.AssembleStore
+import com.rtuitlab.assemble.ui.assemble.AssembleStore
 import eu.iamkonstantin.kotlin.gadulka.rememberGadulkaLiveState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.compose.getKoin

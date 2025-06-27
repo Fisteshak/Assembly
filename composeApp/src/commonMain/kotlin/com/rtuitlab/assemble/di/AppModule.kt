@@ -5,8 +5,6 @@ import com.arkivanov.mvikotlin.logging.logger.LogFormatter
 import com.arkivanov.mvikotlin.logging.logger.Logger
 import com.arkivanov.mvikotlin.logging.store.LoggingStoreFactory
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
-import com.rtuitlab.assemble.AssembleStoreFactory
-import com.rtuitlab.assemble.data.PdfPrinter
 import com.rtuitlab.assemble.data.WebClient
 import com.rtuitlab.assemble.data.api.AssembleApi
 import com.rtuitlab.assemble.data.api.ComponentApi
@@ -26,6 +24,7 @@ import com.rtuitlab.assemble.domain.usecases.containers.DeleteContainerByNumberU
 import com.rtuitlab.assemble.domain.usecases.containers.GetContainerByNumberUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.GetContainersUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.UpdateContainerByIdUseCase
+import com.rtuitlab.assemble.ui.assemble.AssembleStoreFactory
 import com.rtuitlab.assemble.ui.container.store.ContainerStoreFactory
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
@@ -59,7 +58,6 @@ val koinModule = module {
     // usecases sound
     singleOf(::GenerateSoundByIdUseCase)
 
-    singleOf(::PdfPrinter)
 
     single {
         AssembleStoreFactory(
@@ -117,7 +115,6 @@ val koinModule = module {
             createContainerUseCase = get(),
             updateContainerUseCase = get(),
             deleteContainerByNumberUseCase = get(),
-            pdfPrinter = get()
         ).create()
     }
 

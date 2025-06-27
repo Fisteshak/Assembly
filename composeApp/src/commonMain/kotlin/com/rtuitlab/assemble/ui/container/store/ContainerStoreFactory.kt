@@ -4,9 +4,9 @@ import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.coroutineExecutorFactory
-import com.rtuitlab.assemble.data.PdfPrinter
 import com.rtuitlab.assemble.data.RequestError
 import com.rtuitlab.assemble.data.RequestResult
+import com.rtuitlab.assemble.data.qr.QrPdf
 import com.rtuitlab.assemble.domain.entities.Component
 import com.rtuitlab.assemble.domain.entities.Container
 import com.rtuitlab.assemble.domain.usecases.components.GetComponentsUseCase
@@ -30,7 +30,6 @@ internal class ContainerStoreFactory(
     private val createContainerUseCase: CreateContainerUseCase,
     private val updateContainerUseCase: UpdateContainerByIdUseCase,
     private val deleteContainerByNumberUseCase: DeleteContainerByNumberUseCase,
-    private val pdfPrinter: PdfPrinter
 ) {
 
     private sealed interface Action {
@@ -312,10 +311,15 @@ internal class ContainerStoreFactory(
                         }
                     }
 
-                    onIntent<Intent.Print> {
+                    onIntent<Intent.Print> { intent ->
                         launch {
-                            println(pdfPrinter.getAvailablePrinters())
-                            pdfPrinter.printPdf(it.pngImage.toByteArray())
+                            with(QrPdf(cols = 3)) {
+                                repeat(40) {
+                                    addQr(intent.pngImage.toByteArray(), intent.name)
+                                }
+                                print()
+                            }
+//                            pdfPrinter.print(it.pngImage.toByteArray())
 
                         }
                     }

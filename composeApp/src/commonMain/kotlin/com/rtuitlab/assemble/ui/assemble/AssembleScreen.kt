@@ -31,9 +31,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.rtuitlab.assemble.AssembleStore
-import com.rtuitlab.assemble.AssembleStore.Label
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
+import com.rtuitlab.assemble.ui.assemble.AssembleStore.Label
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -183,7 +182,7 @@ fun AssembleScreen(
                                     isSaving = true
                                     scope.launch {
                                         store.labels.collect {
-                                            if (it is AssembleStore.Label.PublishedAssemble) {
+                                            if (it is Label.PublishedAssemble) {
                                                 onNavigateBack()
                                             }
                                         }

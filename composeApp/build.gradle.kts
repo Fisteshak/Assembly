@@ -29,7 +29,9 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
 //        useCommonJs()
-
+        compilerOptions {
+            freeCompilerArgs.add("-Xwasm-attach-js-exception")
+        }
         outputModuleName = "composeApp"
         browser {
             val rootDirPath = project.rootDir.path
@@ -103,9 +105,8 @@ kotlin {
                 implementation("io.ktor:ktor-client-js:3.1.2")
                 // browser api (for printing)
                 implementation("org.jetbrains.kotlinx:kotlinx-browser:0.3")
-                implementation(npm("is-odd", "3.0.1"))
-//                implementation(npm("is-sorted", "1.0.5"))
-//                implementation(npm("pdfjs", "2.5.3"))
+//                implementation(npm("is-odd", "3.0.1"))
+                implementation(npm("jspdf", "3.0.1"))
             }
         }
 

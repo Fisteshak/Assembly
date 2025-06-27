@@ -54,6 +54,7 @@ fun ContainerScreen(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     val store: ContainerStore = getKoin().get()
     val uiState by store.stateFlow.collectAsStateWithLifecycle()
 
@@ -70,7 +71,6 @@ fun ContainerScreen(
 
         contentAlignment = Alignment.Center
     ) {
-
 
 
         Column(
@@ -245,7 +245,8 @@ fun ContainerScreen(
                                                 qrCode.intrinsicSize.width.toInt(),
                                                 qrCode.intrinsicSize.height.toInt(),
                                                 ImageFormat.PNG
-                                            ).toList()
+                                            ).toList(),
+                                            container.number
                                         )
                                     )
                                 },

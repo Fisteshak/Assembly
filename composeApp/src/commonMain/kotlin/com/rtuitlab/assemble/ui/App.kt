@@ -22,10 +22,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.dialog
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.rtuitlab.assemble.AssembleStore
 import com.rtuitlab.assemble.di.koinModule
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.ui.assemble.AssembleScreen
+import com.rtuitlab.assemble.ui.assemble.AssembleStore
 import com.rtuitlab.assemble.ui.container.ContainerScreen
 import com.rtuitlab.assemble.ui.container.store.ContainerStore
 import com.rtuitlab.assemble.ui.home.HomeScreen

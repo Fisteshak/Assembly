@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.rtuitlab.assemble.AssembleStore
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
 import com.rtuitlab.assemble.domain.entities.Component
 import org.koin.compose.getKoin
