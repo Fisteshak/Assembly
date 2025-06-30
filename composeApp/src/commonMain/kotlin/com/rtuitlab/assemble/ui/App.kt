@@ -25,10 +25,11 @@ import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.rtuitlab.assemble.di.koinModule
 import com.rtuitlab.assemble.domain.entities.Assemble
 import com.rtuitlab.assemble.ui.assemble.AssembleScreen
-import com.rtuitlab.assemble.ui.assemble.AssembleStore
+import com.rtuitlab.assemble.ui.assemble.store.AssembleStore
 import com.rtuitlab.assemble.ui.container.ContainerScreen
 import com.rtuitlab.assemble.ui.container.store.ContainerStore
 import com.rtuitlab.assemble.ui.home.HomeScreen
+import com.rtuitlab.assemble.ui.qrprint.QrPrintScreen
 import com.rtuitlab.assemble.ui.sound.SoundWindow
 import com.rtuitlab.assemble.ui.theme.AppTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -101,7 +102,11 @@ fun App(navController: NavHostController) {
                             launchSingleTop = true
                         }
                     },
-                    onQrCodeClick = {},
+                    onQrCodeClick = {
+                        navController.navigate(QrPrintScreenRoute) {
+                            launchSingleTop = true
+                        }
+                    },
                     onBackClick = if (shouldShowBackButton) {
                         {
                             navController.popBackStack(HomeScreenRoute, false)
@@ -164,6 +169,13 @@ fun App(navController: NavHostController) {
 
                     composable<ContainerScreenRoute> {
                         ContainerScreen(
+                            onNavigateBack = { navController.popBackStack() },
+                            modifier = Modifier
+                        )
+                    }
+
+                    composable<QrPrintScreenRoute> {
+                        QrPrintScreen(
                             onNavigateBack = { navController.popBackStack() },
                             modifier = Modifier
                         )

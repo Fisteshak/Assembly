@@ -17,3 +17,6 @@ data class SoundWindowRoute(
 
 @Serializable
 data object ContainerScreenRoute
+
+@Serializable
+data object QrPrintScreenRoute

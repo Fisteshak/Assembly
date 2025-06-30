@@ -32,7 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.mvikotlin.extensions.coroutines.labels
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
-import com.rtuitlab.assemble.ui.assemble.AssembleStore.Label
+import com.rtuitlab.assemble.ui.assemble.store.AssembleStore
+import com.rtuitlab.assemble.ui.assemble.store.AssembleStore.Label
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

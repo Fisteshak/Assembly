@@ -1,6 +1,5 @@
-package com.rtuitlab.assemble.ui.assemble
+package com.rtuitlab.assemble.ui.assemble.store
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import com.arkivanov.mvikotlin.core.store.Reducer
@@ -19,66 +18,9 @@ import com.rtuitlab.assemble.domain.usecases.assemblies.GetAssembleByIdUseCase
 import com.rtuitlab.assemble.domain.usecases.assemblies.GetAssembliesUseCase
 import com.rtuitlab.assemble.domain.usecases.assemblies.UpdateAssembleUseCase
 import com.rtuitlab.assemble.domain.usecases.components.GetComponentsUseCase
-import com.rtuitlab.assemble.ui.assemble.AssembleStore.Intent
-import com.rtuitlab.assemble.ui.assemble.AssembleStore.Label
-import com.rtuitlab.assemble.ui.assemble.AssembleStore.State
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
-
-internal interface AssembleStore : Store<Intent, State, Label> {
-
-    sealed interface Intent {
-        data object FetchAssemblies : Intent
-        data object FetchComponents : Intent
-
-        data class FetchAssembleById(val id: Long) : Intent
-
-        data class ChangeAmount(
-            val assembleId: Long,
-            val assembleComponentIndex: Int,
-            val amount: Long
-        ) : Intent
-
-
-        data class SetCurrentAssemble(
-            val value: Assemble?
-        ) : Intent
-
-        data class PublishAssemble(
-            val value: Assemble
-        ) : Intent
-
-        data class DeleteAssembleById(
-            val assembleId: Long
-        ) : Intent
-
-        /**
-         * generates sound for assemble,
-         * sends GeneratedSound label when completed
-         */
-        data class GenerateSoundById(
-            val assembleId: Long
-        ) : Intent
-    }
-
-    data class State(
-        val currentAssemble: Assemble? = null,
-        val assemblies: SnapshotStateList<Assemble> = mutableStateListOf(),
-        val components: SnapshotStateList<Component> = mutableStateListOf(),
-    )
-
-    sealed interface Label {
-        data class PublishedAssemble(val id: Long) : Label
-
-        /**
-         * @param assemble assemble with generated sound, or null if sound wasn't generated
-         */
-        data class GeneratedSound(val assemble: Assemble?) : Label
-
-    }
-}
 
 internal class AssembleStoreFactory(
     private val storeFactory: StoreFactory,
@@ -94,23 +36,24 @@ internal class AssembleStoreFactory(
 
     fun create(): AssembleStore {
 
-        return object : AssembleStore, Store<Intent, State, Label> by storeFactory.create(
-            name = "Store",
-            initialState = State(),
-            reducer = ReducerImpl,
-            bootstrapper = SimpleBootstrapper(Action.FetchAssemblies, Action.FetchComponents),
-            executorFactory = {
-                ExecutorImpl(
-                    getAssembliesUseCase,
-                    getAssembleByIdUseCase,
-                    getComponentsUseCase,
-                    createAssembleUseCase,
-                    updateAssembleUseCase,
-                    deleteAssembleByIdUseCase,
-                    generateSoundByIdUseCase
-                )
-            }
-        ) {}
+        return object : AssembleStore,
+            Store<AssembleStore.Intent, AssembleStore.State, AssembleStore.Label> by storeFactory.create(
+                name = "Store",
+                initialState = AssembleStore.State(),
+                reducer = ReducerImpl,
+                bootstrapper = SimpleBootstrapper(Action.FetchAssemblies, Action.FetchComponents),
+                executorFactory = {
+                    ExecutorImpl(
+                        getAssembliesUseCase,
+                        getAssembleByIdUseCase,
+                        getComponentsUseCase,
+                        createAssembleUseCase,
+                        updateAssembleUseCase,
+                        deleteAssembleByIdUseCase,
+                        generateSoundByIdUseCase
+                    )
+                }
+            ) {}
 
     }
 
@@ -140,18 +83,18 @@ internal class AssembleStoreFactory(
         val updateAssembleUseCase: UpdateAssembleUseCase,
         val deleteAssembleByIdUseCase: DeleteAssembleByIdUseCase,
         val generateSoundByIdUseCase: GenerateSoundByIdUseCase,
-    ) : CoroutineExecutor<Intent, Action, State, Msg, Label>() {
+    ) : CoroutineExecutor<AssembleStore.Intent, Action, AssembleStore.State, Msg, AssembleStore.Label>() {
 
         var currentJob: Job? = null
 
-        override fun executeIntent(intent: Intent) {
+        override fun executeIntent(intent: AssembleStore.Intent) {
             when (intent) {
-                is Intent.FetchAssemblies -> fetchAssemblies()
-                is Intent.FetchAssembleById -> fetchAssembleById(intent.id)
-                is Intent.FetchComponents -> fetchComponents()
+                is AssembleStore.Intent.FetchAssemblies -> fetchAssemblies()
+                is AssembleStore.Intent.FetchAssembleById -> fetchAssembleById(intent.id)
+                is AssembleStore.Intent.FetchComponents -> fetchComponents()
 
 
-                is Intent.ChangeAmount -> {
+                is AssembleStore.Intent.ChangeAmount -> {
                     state().assemblies.find { it.assembleId == intent.assembleId }.also {
                         val assembleComponent =
                             it?.components!![intent.assembleComponentIndex].copy(amount = intent.amount)
@@ -159,12 +102,12 @@ internal class AssembleStoreFactory(
                     }
                 }
 
-                is Intent.SetCurrentAssemble -> {
+                is AssembleStore.Intent.SetCurrentAssemble -> {
                     currentJob?.cancel()
                     dispatch(Msg.SetCurrentAssemble(intent.value))
                 }
 
-                is Intent.PublishAssemble -> {
+                is AssembleStore.Intent.PublishAssemble -> {
                     currentJob = scope.launch {
                         val assembleId = if (intent.value.assembleId != -1L) {
                             updateAssembleUseCase(intent.value)
@@ -172,11 +115,11 @@ internal class AssembleStoreFactory(
                             createAssembleUseCase(intent.value)
                         }
 
-                        publish(Label.PublishedAssemble(assembleId))
+                        publish(AssembleStore.Label.PublishedAssemble(assembleId))
                     }
                 }
 
-                is Intent.DeleteAssembleById -> {
+                is AssembleStore.Intent.DeleteAssembleById -> {
                     scope.launch {
                         deleteAssembleByIdUseCase(intent.assembleId)
                         forward(Action.FetchAssemblies)
@@ -184,7 +127,7 @@ internal class AssembleStoreFactory(
                 }
 
 
-                is Intent.GenerateSoundById -> {
+                is AssembleStore.Intent.GenerateSoundById -> {
                     scope.launch {
                         generateSoundByIdUseCase(intent.assembleId)
                         var attempts = 0
@@ -195,12 +138,12 @@ internal class AssembleStoreFactory(
                             val assemble = getAssembleByIdUseCase(intent.assembleId)
                             if (assemble.linkToSound != null && assemble.components != null && assemble.components.all { it.linkToSound != null }) {
 
-                                publish(Label.GeneratedSound(assemble))
+                                publish(AssembleStore.Label.GeneratedSound(assemble))
                                 println("generated sound after $attempts attempts")
                                 return@launch
                             }
                         }
-                        publish(Label.GeneratedSound(null))
+                        publish(AssembleStore.Label.GeneratedSound(null))
                         println("failed to generate sound after $attemptsLimit attempts")
 
                     }
@@ -249,8 +192,8 @@ internal class AssembleStoreFactory(
 
     }
 
-    private object ReducerImpl : Reducer<State, Msg> {
-        override fun State.reduce(msg: Msg): State {
+    private object ReducerImpl : Reducer<AssembleStore.State, Msg> {
+        override fun AssembleStore.State.reduce(msg: Msg): AssembleStore.State {
 
 
             return when (msg) {
@@ -280,4 +223,3 @@ internal class AssembleStoreFactory(
         }
     }
 }
-

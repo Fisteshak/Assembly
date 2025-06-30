@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rtuitlab.assemble.domain.entities.AssembleComponent
 import com.rtuitlab.assemble.domain.entities.Component
+import com.rtuitlab.assemble.ui.assemble.store.AssembleStore
 import org.koin.compose.getKoin
 
 @Composable

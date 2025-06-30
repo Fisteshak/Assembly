@@ -54,57 +54,60 @@ class JvmPdfService : PdfService {
         width: Length,
         height: Length
     ) {
+        withContext(Dispatchers.IO) {
+            val pdImage = PDImageXObject.createFromByteArray(document, pngImageData, "qr-code")
+            val contents = PDPageContentStream(
+                document, currentPage,
+                PDPageContentStream.AppendMode.APPEND, true
+            )
 
-        val pdImage = PDImageXObject.createFromByteArray(document, pngImageData, "qr-code")
-        val contents = PDPageContentStream(
-            document, currentPage,
-            PDPageContentStream.AppendMode.APPEND, true
-        )
+            val yNew = pageHeight - (y.toFloat() + height.toFloat()) * POINTS_PER_MM
+            val xNew = x.toFloat() * POINTS_PER_MM
 
-        val yNew = pageHeight - (y.toFloat() + height.toFloat()) * POINTS_PER_MM
-        val xNew = x.toFloat() * POINTS_PER_MM
+            contents.drawImage(
+                pdImage,
+                xNew,
+                yNew,
+                width.toFloat() * POINTS_PER_MM,
+                height.toFloat() * POINTS_PER_MM
+            )
 
-        contents.drawImage(
-            pdImage,
-            xNew,
-            yNew,
-            width.toFloat() * POINTS_PER_MM,
-            height.toFloat() * POINTS_PER_MM
-        )
-
-        contents.close()
-
+            contents.close()
+        }
     }
 
     override suspend fun addCenteredText(text: String, x: Length, y: Length) {
-        val contents = PDPageContentStream(
-            document, currentPage,
-            PDPageContentStream.AppendMode.APPEND, true
-        )
+        withContext(Dispatchers.IO) {
 
-        val fontSize = 14f
-        val font = PDType1Font(Standard14Fonts.FontName.HELVETICA)
-        contents.beginText()
-        contents.setFont(font, fontSize);
+            val contents = PDPageContentStream(
+                document, currentPage,
+                PDPageContentStream.AppendMode.APPEND, true
+            )
 
-        val textWidth = font.getStringWidth(text) / 1000 * fontSize
-        val textHeight =
-            font.fontDescriptor.getFontBoundingBox().height / 1000 * fontSize
+            val fontSize = 14f
+            val font = PDType1Font(Standard14Fonts.FontName.HELVETICA)
+            contents.beginText()
+            contents.setFont(font, fontSize);
 
-        val yNew = pageHeight - y.toFloat() * POINTS_PER_MM
-        val xNew = x.toFloat() * POINTS_PER_MM - textWidth / 2
+            val textWidth = font.getStringWidth(text) / 1000 * fontSize
+            val textHeight =
+                font.fontDescriptor.getFontBoundingBox().height / 1000 * fontSize
+
+            val yNew = pageHeight - y.toFloat() * POINTS_PER_MM
+            val xNew = x.toFloat() * POINTS_PER_MM - textWidth / 2
 
 
-        contents.newLineAtOffset(xNew, yNew);
-        contents.showText(text)
-        contents.endText()
-        contents.close()
-
+            contents.newLineAtOffset(xNew, yNew);
+            contents.showText(text)
+            contents.endText()
+            contents.close()
+        }
     }
 
     override fun addPage() {
         currentPage = PDPage(PDRectangle.A4)
         document.addPage(currentPage)
+
     }
 }
 

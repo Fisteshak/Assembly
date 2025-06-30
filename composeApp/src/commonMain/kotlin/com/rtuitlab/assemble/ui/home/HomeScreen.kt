@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import com.rtuitlab.assemble.ui.assemble.AssembleStore
+import com.rtuitlab.assemble.ui.assemble.store.AssembleStore
 import com.rtuitlab.assemble.ui.container.store.ContainerStore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.compose.getKoin

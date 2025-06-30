@@ -24,7 +24,7 @@ import com.rtuitlab.assemble.domain.usecases.containers.DeleteContainerByNumberU
 import com.rtuitlab.assemble.domain.usecases.containers.GetContainerByNumberUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.GetContainersUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.UpdateContainerByIdUseCase
-import com.rtuitlab.assemble.ui.assemble.AssembleStoreFactory
+import com.rtuitlab.assemble.ui.assemble.store.AssembleStoreFactory
 import com.rtuitlab.assemble.ui.container.store.ContainerStoreFactory
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module

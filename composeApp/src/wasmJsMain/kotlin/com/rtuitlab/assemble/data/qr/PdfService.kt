@@ -4,7 +4,6 @@ import com.rtuitlab.assemble.data.js
 import com.rtuitlab.assemble.data.qr.external.jsPDF
 import com.rtuitlab.assemble.data.qr.external.parsePng
 
-fun getOptions(): JsAny = js("({ align: 'center' })")
 
 class JsPdfService : PdfService {
     private val pdf: jsPDF = jsPDF().apply {
@@ -41,6 +40,9 @@ class JsPdfService : PdfService {
     override fun addPage() {
         pdf.addPage()
     }
+
+    private fun getOptions(): JsAny = js("({ align: 'center' })")
+
 }
 
 actual fun pdfService(): PdfService = JsPdfService()
