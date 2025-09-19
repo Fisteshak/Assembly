@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import assembly.composeapp.generated.resources.Res
 import assembly.composeapp.generated.resources.box_checked_in_icon
 import assembly.composeapp.generated.resources.box_checked_out_icon
+import assembly.composeapp.generated.resources.minus_icon
+import assembly.composeapp.generated.resources.plus_icon
 import assembly.composeapp.generated.resources.trash_icon
 import org.jetbrains.compose.resources.painterResource
 
@@ -35,11 +37,13 @@ fun QrPrintElementRow(
     number: String,
     amount: Int,
     isChecked: Boolean,
-    onCheckedClick: () -> Unit,
+    onCheckedClick: (Boolean) -> Unit,
     onDeleteClick: () -> Unit,
+    onAmountChange: (Int) -> Unit,
+    buttonEnabledColor: Color = Color(0xffabb7ff),
+    buttonDisabledColor: Color = Color(0xffb6b6bd),
     modifier: Modifier = Modifier,
 ) {
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -55,7 +59,8 @@ fun QrPrintElementRow(
                     shape = RoundedCornerShape(4.dp)
                 )
                 .fillMaxHeight()
-                .padding(horizontal = 40.dp),
+                .padding(horizontal = 25.dp)
+                .weight(1f),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -64,16 +69,41 @@ fun QrPrintElementRow(
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 18.sp)
             )
 
-            Spacer(Modifier.width(110.dp))
+            Spacer(Modifier.weight(1f))
+
+            IconButton(
+                onClick = { if (amount > 1) onAmountChange(amount - 1) },
+                enabled = amount > 1,
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.minus_icon),
+                    contentDescription = "Decrease quantity",
+                    tint = if (amount > 1) buttonEnabledColor else buttonDisabledColor
+                )
+            }
+
 
             Text(
                 "$amount шт",
                 color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.titleLarge.copy(fontSize = 18.sp)
+                style = MaterialTheme.typography.titleLarge.copy(fontSize = 18.sp),
+                modifier = Modifier.padding(horizontal = 10.dp)
             )
+
+            IconButton(
+                onClick = { onAmountChange(amount + 1) },
+                modifier = Modifier.Companion
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.plus_icon),
+                    contentDescription = "Increase quantity",
+                    tint = buttonEnabledColor
+                )
+            }
+
         }
 
-        Spacer(Modifier.width(66.dp))
+        Spacer(Modifier.width(40.dp))
 
         Box(
             modifier = Modifier
@@ -86,7 +116,7 @@ fun QrPrintElementRow(
             contentAlignment = Alignment.Center
         ) {
             IconButton(
-                onClick = onCheckedClick,
+                onClick = { onCheckedClick(!isChecked) },
                 modifier = Modifier
             ) {
                 Icon(
@@ -103,7 +133,7 @@ fun QrPrintElementRow(
             }
         }
 
-        Spacer(Modifier.width(60.dp))
+        Spacer(Modifier.width(25.dp))
         val colorRed = Color(0xFF9B5657)
         IconButton(
             onClick = onDeleteClick,

@@ -4,6 +4,7 @@ import androidx.compose.material.SnackbarHostState
 import com.arkivanov.mvikotlin.core.store.Store
 import com.rtuitlab.assemble.domain.entities.Component
 import com.rtuitlab.assemble.domain.entities.Container
+import com.rtuitlab.assemble.domain.entities.ContainerForPrinting
 import com.rtuitlab.assemble.ui.container.store.ContainerStore.Intent
 import com.rtuitlab.assemble.ui.container.store.ContainerStore.Label
 import com.rtuitlab.assemble.ui.container.store.ContainerStore.State
@@ -48,14 +49,29 @@ internal interface ContainerStore : Store<Intent, State, Label> {
 
         data class DeleteContainerByNumber(val number: String) : Intent
 
-        data class Print(val pngImage: List<Byte>, val name: String) : Intent
+        data class Print(val containersForPrinting: List<ContainerForPrinting>) : Intent
+
+        data class AddContainerToPrintingList(val containerForPrinting: ContainerForPrinting) :
+            Intent
+
+
+        /**
+         * modifies containerForPrinting in list using it's number. Does nothing if this container isn't in list
+         */
+        data class ChangeContainerForPrinting(val containerForPrinting: ContainerForPrinting) :
+            Intent
+
+        data class DeleteContainerForPrintingByNumber(val containerForPrinting: ContainerForPrinting) :
+            Intent
 
     }
 
     data class State(
         val containers: List<Container>? = null,
+        val containersForPrinting: List<ContainerForPrinting> = emptyList(),
         val currentContainer: CurrentContainer? = null,
         val components: List<Component> = emptyList(),
+
         val snackBarHostState: SnackbarHostState = SnackbarHostState(),
         val isSaving: Boolean = false,
     ) {

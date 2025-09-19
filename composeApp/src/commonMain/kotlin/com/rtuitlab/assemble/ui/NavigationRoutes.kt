@@ -20,3 +20,6 @@ data object ContainerScreenRoute
 
 @Serializable
 data object QrPrintScreenRoute
+
+@Serializable
+data object LoginScreenRoute

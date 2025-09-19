@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
+import com.rtuitlab.assemble.domain.entities.ContainerForPrinting
 import com.rtuitlab.assemble.ui.common.QuantitySelector
 import com.rtuitlab.assemble.ui.container.store.ContainerStore
 import com.rtuitlab.assemble.ui.container.store.ContainerStore.Intent
@@ -52,6 +53,7 @@ import org.koin.compose.getKoin
 @Composable
 fun ContainerScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToPrintScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -240,15 +242,20 @@ fun ContainerScreen(
                             Button(
                                 onClick = {
                                     store.accept(
-                                        Intent.Print(
-                                            qrCode.toByteArray(
-                                                qrCode.intrinsicSize.width.toInt(),
-                                                qrCode.intrinsicSize.height.toInt(),
-                                                ImageFormat.PNG
-                                            ).toList(),
-                                            container.number
+                                        Intent.AddContainerToPrintingList(
+                                            ContainerForPrinting(
+                                                currentContainer.number,
+                                                quantity.toInt(),
+                                                true,
+                                                qrCode.toByteArray(
+                                                    qrCode.intrinsicSize.width.toInt(),
+                                                    qrCode.intrinsicSize.height.toInt(),
+                                                    ImageFormat.PNG
+                                                ).toList()
+                                            )
                                         )
                                     )
+                                    onNavigateToPrintScreen()
                                 },
                                 modifier = Modifier,
                                 colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.secondaryContainer),
@@ -280,7 +287,6 @@ fun ContainerScreen(
                             store.accept(
                                 Intent.UpdateCurrentContainerByNumber(
                                     container,
-                                    // TODO remove null assert
                                     currentContainer.number
                                 )
                             )

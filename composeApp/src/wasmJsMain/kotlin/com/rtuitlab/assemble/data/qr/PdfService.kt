@@ -41,8 +41,10 @@ class JsPdfService : PdfService {
         pdf.addPage()
     }
 
-    private fun getOptions(): JsAny = js("({ align: 'center' })")
+    private fun getOptions(): JsAny = getOptions2()
 
 }
+
+fun getOptions2(): JsAny = js("({ align: 'center' })")
 
 actual fun pdfService(): PdfService = JsPdfService()

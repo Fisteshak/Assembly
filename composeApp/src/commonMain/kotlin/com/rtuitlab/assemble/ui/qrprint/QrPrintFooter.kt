@@ -15,6 +15,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+fun getQrCodeLabel(amount: Int): String {
+    val rem100 = amount % 100
+    val rem10 = amount % 10
+    return when {
+        rem100 in 11..14 -> "qr-кодов"
+        rem10 == 1 -> "qr-код"
+        rem10 in 2..4 -> "qr-кода"
+        else -> "qr-кодов"
+    }
+}
 
 @Composable
 fun QrPrintFooter(
@@ -35,8 +45,10 @@ fun QrPrintFooter(
         Spacer(Modifier.height(14.dp))
 
 
+
+
         Text(
-            "На печать будет отправлено $amount qr-кода", // TODO обработать окончания
+            "На печать будет отправлено $amount ${getQrCodeLabel(amount)}",
             modifier = Modifier,
             style = MaterialTheme.typography.titleLarge
         )
@@ -45,9 +57,7 @@ fun QrPrintFooter(
 
 
         Button(
-            onClick = {
-
-            },
+            onClick = onPrintClick,
             modifier = Modifier.width(260.dp).height(45.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.primary),
             shape = RoundedCornerShape(10.dp),

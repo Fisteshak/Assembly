@@ -70,7 +70,7 @@ fun NavigationBar(
                             modifier = Modifier.padding(top = 4.dp)
                         )
                         Text(
-                            text = "На главную",
+                            text = "Назад",
                             color = MaterialTheme.colorScheme.onPrimaryContainer,
                             style = MaterialTheme.typography.titleMedium
                         )

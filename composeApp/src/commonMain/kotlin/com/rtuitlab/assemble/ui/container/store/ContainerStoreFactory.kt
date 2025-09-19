@@ -9,6 +9,7 @@ import com.rtuitlab.assemble.data.RequestResult
 import com.rtuitlab.assemble.data.qr.QrPdf
 import com.rtuitlab.assemble.domain.entities.Component
 import com.rtuitlab.assemble.domain.entities.Container
+import com.rtuitlab.assemble.domain.entities.ContainerForPrinting
 import com.rtuitlab.assemble.domain.usecases.components.GetComponentsUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.CreateContainerUseCase
 import com.rtuitlab.assemble.domain.usecases.containers.DeleteContainerByNumberUseCase
@@ -45,6 +46,8 @@ internal class ContainerStoreFactory(
 
         //        data class SetContainerComponent(val component: Component) : Msg
         data class SetIsSaving(val value: Boolean) : Msg
+        data class SetContainersForPrinting(val containersForPrinting: List<ContainerForPrinting>) :
+            Msg
     }
 
     fun create(): ContainerStore =
@@ -187,7 +190,7 @@ internal class ContainerStoreFactory(
 
                             dispatch(Msg.SetIsSaving(true))
 
-                            var result: RequestResult<Container> =
+                            val result: RequestResult<Container> =
                                 updateContainerUseCase(it.container, it.number)
 
                             dispatch(Msg.SetIsSaving(false))
@@ -253,15 +256,15 @@ internal class ContainerStoreFactory(
                             when (result) {
                                 is RequestResult.Success -> {
 
-                                        dispatch(
-                                            Msg.SetCurrentContainer(
-                                                State.CurrentContainer(
-                                                    result.data,
-                                                    state().components.find { it.id == result.data.componentId }!!,
-                                                    number = result.data.number
-                                                )
+                                    dispatch(
+                                        Msg.SetCurrentContainer(
+                                            State.CurrentContainer(
+                                                result.data,
+                                                state().components.find { it.id == result.data.componentId }!!,
+                                                number = result.data.number
                                             )
                                         )
+                                    )
 
 
 
@@ -313,15 +316,57 @@ internal class ContainerStoreFactory(
 
                     onIntent<Intent.Print> { intent ->
                         launch {
-                            with(QrPdf(cols = 3)) {
-                                repeat(40) {
-                                    addQr(intent.pngImage.toByteArray(), intent.name)
+
+
+                            with(QrPdf(cols = 2)) {
+                                for (container in intent.containersForPrinting) {
+                                    repeat(container.amount) {
+                                        addQr(container.qr.toByteArray(), container.number)
+                                    }
                                 }
                                 print()
                             }
-//                            pdfPrinter.print(it.pngImage.toByteArray())
 
                         }
+                    }
+                    onIntent<Intent.AddContainerToPrintingList> { intent ->
+                        val containersForPrinting = state().containersForPrinting
+                        val container =
+                            containersForPrinting.find { it.number == intent.containerForPrinting.number }
+                                ?: intent.containerForPrinting
+                        val new =
+                            containersForPrinting.minus(container).plus(intent.containerForPrinting)
+                        dispatch(
+                            Msg.SetContainersForPrinting(new)
+                        )
+                    }
+
+                    onIntent<Intent.ChangeContainerForPrinting> { intent ->
+                        val containersForPrinting = state().containersForPrinting
+                        val containerIndex =
+                            containersForPrinting.indexOfFirst { it.number == intent.containerForPrinting.number }
+                        if (containerIndex != -1) {
+                            val new = containersForPrinting.toMutableList()
+                            new[containerIndex] = intent.containerForPrinting
+                            dispatch(
+                                Msg.SetContainersForPrinting(new.toList())
+                            )
+                        }
+
+                    }
+
+                    onIntent<Intent.DeleteContainerForPrintingByNumber> { intent ->
+                        val containersForPrinting = state().containersForPrinting
+                        val containerIndex =
+                            containersForPrinting.indexOfFirst { it.number == intent.containerForPrinting.number }
+                        if (containerIndex != -1) {
+                            val new = containersForPrinting.toMutableList()
+                            new.removeAt(containerIndex)
+                            dispatch(
+                                Msg.SetContainersForPrinting(new.toList())
+                            )
+                        }
+
                     }
 
 
@@ -329,6 +374,7 @@ internal class ContainerStoreFactory(
                 reducer = { msg ->
                     when (msg) {
                         is Msg.SetContainers -> {
+
                             copy(containers = msg.containers)
                         }
 
@@ -339,7 +385,7 @@ internal class ContainerStoreFactory(
                         is Msg.SetComponents -> copy(components = msg.components)
 
                         is Msg.SetIsSaving -> copy(isSaving = msg.value)
-
+                        is Msg.SetContainersForPrinting -> copy(containersForPrinting = msg.containersForPrinting)
                     }
                 }
             ) {

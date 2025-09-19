@@ -5,10 +5,10 @@ package com.rtuitlab.assemble.data.qr
  */
 class QrPdf(
     val cols: Int,
-    val horizontalMargin: Length = 10.0.mm,
+    val horizontalMargin: Length = 18.0.mm,
     val verticalMargin: Length = 10.0.mm,
-    val horizontalInnerPadding: Length = 10.0.mm,
-    val verticalInnerPadding: Length = 15.0.mm,
+    val horizontalInnerPadding: Length = 16.0.mm,
+    val verticalInnerPadding: Length = 12.0.mm,
 ) {
     private val pdfService = pdfService()
 
