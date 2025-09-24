@@ -28,7 +28,7 @@ suspend inline fun <reified T> HttpClient.safeRequest(
     block: HttpRequestBuilder.() -> Unit,
 ): RequestResult<T> {
     return try {
-        val response = request { block() }
+        val response = request(block)
         RequestResult.Success(response.body())
     } catch (e: ClientRequestException) {
         RequestResult.Failure(RequestError.ApiError(e.message, e.response.status.value))

@@ -22,7 +22,7 @@ import com.rtuitlab.assemble.ui.container.store.ContainerStore.State
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-
+// этот store реализован через Store DSL API
 internal class ContainerStoreFactory(
     private val storeFactory: StoreFactory,
     private val getContainersUseCase: GetContainersUseCase,
@@ -69,7 +69,7 @@ internal class ContainerStoreFactory(
                                 getContainersUseCase(it.room)
                             when (result) {
                                 is RequestResult.Success -> dispatch(Msg.SetContainers(result.data))
-                                is RequestResult.Failure -> TODO()
+                                is RequestResult.Failure -> state().snackBarHostState.showSnackbar("Ошибка")
                             }
                         }
                     }
@@ -111,7 +111,9 @@ internal class ContainerStoreFactory(
                                             )
                                         }
 
-                                        is RequestResult.Failure -> TODO()
+                                        is RequestResult.Failure -> state().snackBarHostState.showSnackbar(
+                                            "Ошибка"
+                                        )
                                     }
 
 
@@ -129,7 +131,7 @@ internal class ContainerStoreFactory(
                                 getContainersUseCase(it.room)
                             when (result) {
                                 is RequestResult.Success -> dispatch(Msg.SetContainers(result.data))
-                                is RequestResult.Failure -> TODO()
+                                is RequestResult.Failure -> state().snackBarHostState.showSnackbar("Ошибка")
                             }
                         }
                     }
@@ -154,7 +156,7 @@ internal class ContainerStoreFactory(
                             val result: RequestResult<List<Component>> = getComponentsUseCase()
                             when (result) {
                                 is RequestResult.Success -> dispatch(Msg.SetComponents(result.data))
-                                is RequestResult.Failure -> TODO()
+                                is RequestResult.Failure -> state().snackBarHostState.showSnackbar("Ошибка")
                             }
                         }
                     }
@@ -164,7 +166,7 @@ internal class ContainerStoreFactory(
                             val result: RequestResult<List<Component>> = getComponentsUseCase()
                             when (result) {
                                 is RequestResult.Success -> dispatch(Msg.SetComponents(result.data))
-                                is RequestResult.Failure -> TODO()
+                                is RequestResult.Failure -> state().snackBarHostState.showSnackbar("Ошибка")
                             }
                         }
                     }

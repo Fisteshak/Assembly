@@ -1,5 +1,6 @@
 package com.rtuitlab.assemble.ui.assemble.store
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.arkivanov.mvikotlin.core.store.Store
@@ -50,6 +51,8 @@ internal interface AssembleStore : Store<Intent, State, Label> {
         val currentAssemble: Assemble? = null,
         val assemblies: SnapshotStateList<Assemble> = mutableStateListOf(),
         val components: SnapshotStateList<Component> = mutableStateListOf(),
+        val snackBarHostState: SnackbarHostState = SnackbarHostState(),
+        val isSaving: Boolean = false
     )
 
     sealed interface Label {

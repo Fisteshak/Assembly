@@ -57,6 +57,7 @@ expect fun httpClient(
         defaultRequest {
             url(BASE_URL)
         }
+
     }
 ): HttpClient
 

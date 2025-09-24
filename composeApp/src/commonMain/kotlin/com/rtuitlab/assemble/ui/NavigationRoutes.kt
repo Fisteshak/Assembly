@@ -1,25 +1,23 @@
 package com.rtuitlab.assemble.ui
 
-import kotlinx.serialization.Serializable
-
-@Serializable
+@kotlinx.serialization.Serializable
 object HomeScreenRoute
 
-@Serializable
+@kotlinx.serialization.Serializable
 data class AssembleScreenRoute(
     val assembleId: Long? = null
 )
 
-@Serializable
+@kotlinx.serialization.Serializable
 data class SoundWindowRoute(
     val assembleId: Long? = null
 )
 
-@Serializable
+@kotlinx.serialization.Serializable
 data object ContainerScreenRoute
 
-@Serializable
+@kotlinx.serialization.Serializable
 data object QrPrintScreenRoute
 
-@Serializable
+@kotlinx.serialization.Serializable
 data object LoginScreenRoute

@@ -1,4 +1,7 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
@@ -17,12 +20,17 @@ compose.resources {
     generateResClass = always
 }
 
+
+
+
 kotlin {
     jvm("desktop") {
         compilations.all {
             kotlinOptions.jvmTarget = "21"
         }
+
     }
+
 
 
 
@@ -47,7 +55,7 @@ kotlin {
                 }
             }
         }
-        binaries.executable()
+//        binaries.executable()
     }
 
     sourceSets {
@@ -86,12 +94,13 @@ kotlin {
             // audio player
             implementation("eu.iamkonstantin.kotlin:gadulka:1.6.3")
             val fxSuffix = "win"
-            implementation("org.openjfx:javafx-base:21:${fxSuffix}")
-            implementation("org.openjfx:javafx-graphics:21:${fxSuffix}")
-            implementation("org.openjfx:javafx-controls:21:${fxSuffix}")
-            implementation("org.openjfx:javafx-swing:21:${fxSuffix}")
-            implementation("org.openjfx:javafx-web:21:${fxSuffix}")
-            implementation("org.openjfx:javafx-media:21:${fxSuffix}")
+            val fxVersion = "21"
+            implementation("org.openjfx:javafx-base:$fxVersion:${fxSuffix}")
+            implementation("org.openjfx:javafx-graphics:$fxVersion:${fxSuffix}")
+            implementation("org.openjfx:javafx-controls:$fxVersion:${fxSuffix}")
+            implementation("org.openjfx:javafx-swing:$fxVersion:${fxSuffix}")
+            implementation("org.openjfx:javafx-web:$fxVersion:${fxSuffix}")
+            implementation("org.openjfx:javafx-media:$fxVersion:${fxSuffix}")
 
             // For QR codes
             implementation("io.github.alexzhirkevich:qrose:1.0.1")
@@ -132,10 +141,15 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "com.rtuitlab.assemble.MainKt"
+        buildTypes.release {
+            proguard {
+                configurationFiles.from("compose-desktop.pro", "kotlinx.serialization.pro")
+            }
+        }
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.rtuitlab.assemble"
+            targetFormats(TargetFormat.Exe)
+            packageName = "Assemble"
             packageVersion = "1.0.0"
         }
     }

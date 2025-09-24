@@ -67,6 +67,8 @@ internal class AssembleStoreFactory(
         data class SetAssemble(val value: Assemble) : Msg
         data class SetComponents(val value: SnapshotStateList<Component>) : Msg
         data class SetCurrentAssemble(val value: Assemble?) : Msg
+        data class SetIsSaving(val value: Boolean) : Msg
+
     }
 
     private class BootstrapperImpl : CoroutineBootstrapper<Action>() {
@@ -108,14 +110,41 @@ internal class AssembleStoreFactory(
                 }
 
                 is AssembleStore.Intent.PublishAssemble -> {
+                    currentJob?.cancel()
+
                     currentJob = scope.launch {
-                        val assembleId = if (intent.value.assembleId != -1L) {
+
+                        dispatch(Msg.SetIsSaving(true))
+
+                        val result: RequestResult<Long> = if (intent.value.assembleId != -1L) {
                             updateAssembleUseCase(intent.value)
                         } else {
                             createAssembleUseCase(intent.value)
                         }
 
-                        publish(AssembleStore.Label.PublishedAssemble(assembleId))
+                        dispatch(Msg.SetIsSaving(false))
+
+
+                        when (result) {
+                            is RequestResult.Success -> {
+
+                                val assembleId = result.data
+                                dispatch(
+                                    Msg.SetCurrentAssemble(
+                                        intent.value.copy(assembleId = assembleId)
+                                    )
+                                )
+                                publish(AssembleStore.Label.PublishedAssemble(assembleId))
+                                state().snackBarHostState.showSnackbar(
+                                    "Сохранено",
+                                )
+                            }
+
+                            is RequestResult.Failure -> {
+                                state().snackBarHostState.showSnackbar("Ошибка")
+                            }
+                        }
+
                     }
                 }
 
@@ -135,13 +164,24 @@ internal class AssembleStoreFactory(
                         while (attempts < attemptsLimit) {
                             attempts++
                             delay(1000)
-                            val assemble = getAssembleByIdUseCase(intent.assembleId)
-                            if (assemble.linkToSound != null && assemble.components != null && assemble.components.all { it.linkToSound != null }) {
+                            val result = getAssembleByIdUseCase(intent.assembleId)
+                            when (result) {
+                                is RequestResult.Success -> {
+                                    val assemble = result.data
+                                    if (assemble.linkToSound != null && assemble.components != null && assemble.components.all { it.linkToSound != null }) {
 
-                                publish(AssembleStore.Label.GeneratedSound(assemble))
-                                println("generated sound after $attempts attempts")
-                                return@launch
+                                        publish(AssembleStore.Label.GeneratedSound(assemble))
+                                        println("generated sound after $attempts attempts")
+                                        return@launch
+                                    }
+                                }
+
+                                is RequestResult.Failure -> {
+                                    publish(AssembleStore.Label.GeneratedSound(null))
+                                    println("failed to generate sound after $attemptsLimit attempts")
+                                }
                             }
+
                         }
                         publish(AssembleStore.Label.GeneratedSound(null))
                         println("failed to generate sound after $attemptsLimit attempts")
@@ -160,8 +200,18 @@ internal class AssembleStoreFactory(
 
         private fun fetchAssemblies() {
             scope.launch {
-                val assemblies = getAssembliesUseCase().toMutableStateList()
-                dispatch(Msg.SetAssemblies(assemblies))
+                val result = getAssembliesUseCase()
+                when (result) {
+                    is RequestResult.Success -> {
+                        val assemblies = result.data.toMutableStateList()
+                        dispatch(Msg.SetAssemblies(assemblies))
+                    }
+
+                    is RequestResult.Failure -> {
+                        state().snackBarHostState.showSnackbar("Ошибка")
+                    }
+                }
+
             }
         }
 
@@ -175,7 +225,9 @@ internal class AssembleStoreFactory(
                         )
                     }
 
-                    is RequestResult.Failure -> TODO()
+                    is RequestResult.Failure -> {
+                        state().snackBarHostState.showSnackbar("Ошибка")
+                    }
                 }
             }
         }
@@ -184,8 +236,17 @@ internal class AssembleStoreFactory(
 
             currentJob?.cancel()
             currentJob = scope.launch {
-                val assemble = getAssembleByIdUseCase(id)
-                dispatch(Msg.SetCurrentAssemble(assemble).copy())
+                val result = getAssembleByIdUseCase(id)
+                when (result) {
+                    is RequestResult.Success -> {
+                        val assemble = result.data
+                        dispatch(Msg.SetCurrentAssemble(assemble).copy())
+                    }
+
+                    is RequestResult.Failure -> {
+                        state().snackBarHostState.showSnackbar("Ошибка")
+                    }
+                }
             }
         }
 
@@ -218,6 +279,11 @@ internal class AssembleStoreFactory(
 
                     val assemble = msg.value
                     copy(currentAssemble = assemble?.copy(components = assemble.components?.toMutableStateList()))
+                }
+
+                is Msg.SetIsSaving -> {
+                    copy(isSaving = msg.value)
+
                 }
             }
         }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +53,7 @@ fun AssembleScreen(
     val components = uiState.components
     val assemble = uiState.currentAssemble
     val scope = rememberCoroutineScope()
-    var isSaving by remember { mutableStateOf(false) }
+    var isSaving = uiState.isSaving
 
 
     var showSaveDialog by remember { mutableStateOf(false) }
@@ -181,14 +182,7 @@ fun AssembleScreen(
 
                                     store.accept(AssembleStore.Intent.PublishAssemble(assemble))
                                     isSaving = true
-                                    scope.launch {
-                                        store.labels.collect {
-                                            if (it is Label.PublishedAssemble) {
-                                                onNavigateBack()
-                                            }
-                                        }
 
-                                    }
                                 }
                             },
                             isNew = assemble.assembleId == -1L,
@@ -280,7 +274,10 @@ fun AssembleScreen(
 
         }
 
-
+        SnackbarHost(
+            hostState = uiState.snackBarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
     }
 }
 

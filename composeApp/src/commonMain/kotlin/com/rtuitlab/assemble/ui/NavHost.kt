@@ -1,6 +1,5 @@
 package com.rtuitlab.assemble.ui
 
-import LoginScreen
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -118,7 +117,7 @@ fun NavHost(navController: NavHostController) {
             }
 
             NavHost(
-                navController, startDestination = LoginScreenRoute,
+                navController, startDestination = HomeScreenRoute,
                 enterTransition = { fadeIn(tween(150)) },
                 exitTransition = { fadeOut(tween(150)) },
                 popEnterTransition = { fadeIn(tween(150)) },
@@ -191,17 +190,7 @@ fun NavHost(navController: NavHostController) {
                     )
                 }
 
-                composable<LoginScreenRoute> {
-                    LoginScreen(
-                        "anton",
-                        "asasdsa",
-                        {
-                            navController.navigate(HomeScreenRoute) {
-                                launchSingleTop = true
-                            }
-                        }
-                    )
-                }
+//                composable<LoginScreenRoute> {}
             }
 
         }

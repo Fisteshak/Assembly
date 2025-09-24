@@ -1,13 +1,18 @@
 package com.rtuitlab.assemble.ui.home
 
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -41,91 +46,115 @@ fun HomeScreen(
     val containers = containerStoreUiState.containers
 
 
-
-    Column(
-        Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
+    val stateVertical = rememberScrollState(0)
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .padding(10.dp)
     ) {
-        Column(modifier = Modifier.width(IntrinsicSize.Min)) {
 
-            HomeHeader(
-                "Сборки",
-                modifier = Modifier.fillMaxWidth().padding(start = 6.dp, end = 14.dp)
-            )
-            Box(Modifier.width(IntrinsicSize.Min), contentAlignment = Alignment.Center) {
 
-                ScrollableGrid(
-                    assemblies,
-                    rows = 2, cols = 4,
-                    modifier = Modifier.padding(10.dp),
-                    content = { item ->
-                        AssembleCard(
-                            item,
-                            onClick = {
-                                assembleStore.accept(AssembleStore.Intent.SetCurrentAssemble(null))
-                                assembleStore.accept(AssembleStore.Intent.FetchAssembleById(item.assembleId))
-                                onAssembleClick(item.assembleId)
-                            },
-                            onDelete = {
-                                assembleStore.accept(AssembleStore.Intent.DeleteAssembleById(item.assembleId))
-                            },
-                            modifier = Modifier
-                        )
-                    },
-                    placeholder = {
-                        PlaceholderCard()
-                    }
+        Column(
+            Modifier.fillMaxSize().verticalScroll(stateVertical),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Column(modifier = Modifier.width(IntrinsicSize.Min)) {
+
+                HomeHeader(
+                    "Сборки",
+                    modifier = Modifier.fillMaxWidth().padding(start = 6.dp, end = 14.dp)
                 )
-            }
-
-            HomeHeader(
-                "Контейнеры",
-                modifier = Modifier.fillMaxWidth().padding(start = 6.dp, end = 14.dp)
-            )
-
-
-            Box(Modifier.width(IntrinsicSize.Min), contentAlignment = Alignment.Center) {
-                if (containers == null)
-                    CircularProgressIndicator(
-                        color = MaterialTheme.colorScheme.primary
+                Box(Modifier.width(IntrinsicSize.Min), contentAlignment = Alignment.Center) {
+                    if (assemblies.isEmpty())
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    ScrollableGrid(
+                        assemblies,
+                        rows = 2, cols = 4,
+                        modifier = Modifier.padding(10.dp),
+                        content = { item ->
+                            AssembleCard(
+                                item,
+                                onClick = {
+                                    assembleStore.accept(
+                                        AssembleStore.Intent.SetCurrentAssemble(
+                                            null
+                                        )
+                                    )
+                                    assembleStore.accept(AssembleStore.Intent.FetchAssembleById(item.assembleId))
+                                    onAssembleClick(item.assembleId)
+                                },
+                                onDelete = {
+                                    assembleStore.accept(
+                                        AssembleStore.Intent.DeleteAssembleById(
+                                            item.assembleId
+                                        )
+                                    )
+                                },
+                                modifier = Modifier
+                            )
+                        },
+                        placeholder = {
+                            PlaceholderCard()
+                        }
                     )
-                ScrollableGrid(
-                    containers ?: emptyList(),
-                    rows = 2, cols = 4,
-                    modifier = Modifier.padding(10.dp),
-                    content = { item ->
-                        ContainerCard(
-                            id = item.number,
-                            name = item.formatAmount(),
-                            onClick = {
-                                containerStore.accept(
-                                    ContainerStore.Intent.SetCurrentContainer(null)
-                                )
-                                containerStore.accept(
-                                    ContainerStore.Intent.GetCurrentContainerByNumber(
-                                        item.number
-                                    )
-                                )
-                                onContainerClick(item.number)
-                            },
-                            onDelete = {
-                                containerStore.accept(
-                                    ContainerStore.Intent.DeleteContainerByNumber(
-                                        item.number
-                                    )
-                                )
-                            },
-                            modifier = Modifier
-                        )
-                    },
-                    placeholder = {
-                        PlaceholderCard()
-                    }
-                )
-            }
+                }
 
+                HomeHeader(
+                    "Контейнеры",
+                    modifier = Modifier.fillMaxWidth().padding(start = 6.dp, end = 14.dp)
+                )
+
+
+                Box(Modifier.width(IntrinsicSize.Min), contentAlignment = Alignment.Center) {
+                    if (containers == null)
+                        CircularProgressIndicator(
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    ScrollableGrid(
+                        containers ?: emptyList(),
+                        rows = 2, cols = 4,
+                        modifier = Modifier.padding(10.dp),
+                        content = { item ->
+                            ContainerCard(
+                                id = item.number,
+                                name = item.formatAmount(),
+                                onClick = {
+                                    containerStore.accept(
+                                        ContainerStore.Intent.SetCurrentContainer(null)
+                                    )
+                                    containerStore.accept(
+                                        ContainerStore.Intent.GetCurrentContainerByNumber(
+                                            item.number
+                                        )
+                                    )
+                                    onContainerClick(item.number)
+                                },
+                                onDelete = {
+                                    containerStore.accept(
+                                        ContainerStore.Intent.DeleteContainerByNumber(
+                                            item.number
+                                        )
+                                    )
+                                },
+                                modifier = Modifier
+                            )
+                        },
+                        placeholder = {
+                            PlaceholderCard()
+                        }
+                    )
+                }
+
+            }
         }
+        VerticalScrollbar(
+            modifier = Modifier.align(Alignment.CenterEnd)
+
+                .fillMaxHeight(),
+            adapter = rememberScrollbarAdapter(stateVertical)
+        )
     }
 }
 
