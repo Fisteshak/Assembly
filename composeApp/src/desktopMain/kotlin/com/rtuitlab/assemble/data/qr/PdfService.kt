@@ -6,11 +6,15 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.common.PDRectangle
+import org.apache.pdfbox.pdmodel.font.PDFont
+import org.apache.pdfbox.pdmodel.font.PDType0Font
 import org.apache.pdfbox.pdmodel.font.PDType1Font
 import org.apache.pdfbox.pdmodel.font.Standard14Fonts
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject
 import org.apache.pdfbox.printing.PDFPageable
 import java.awt.print.PrinterJob
+import java.io.File
+
 
 class JvmPdfService : PdfService {
     companion object {
@@ -86,12 +90,14 @@ class JvmPdfService : PdfService {
 
             val fontSize = 14f
             val font = PDType1Font(Standard14Fonts.FontName.HELVETICA)
+            val fontFile: File = File("NotoMono-Regular.ttf")
+            val newFont: PDFont = PDType0Font.load(document, fontFile)
             contents.beginText()
-            contents.setFont(font, fontSize);
+            contents.setFont(newFont, fontSize);
 
-            val textWidth = font.getStringWidth(text) / 1000 * fontSize
+            val textWidth = newFont.getStringWidth(text) / 1000 * fontSize
             val textHeight =
-                font.fontDescriptor.getFontBoundingBox().height / 1000 * fontSize
+                newFont.fontDescriptor.getFontBoundingBox().height / 1000 * fontSize
 
             val yNew = pageHeight - y.toFloat() * POINTS_PER_MM
             val xNew = x.toFloat() * POINTS_PER_MM - textWidth / 2

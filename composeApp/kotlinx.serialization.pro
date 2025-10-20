@@ -2,15 +2,7 @@
 # This avoids serializer lookup through `getDeclaredClasses` as done for named companion objects.
 -if @kotlinx.serialization.Serializable class **
 -keepclassmembers class <1> {
-    static <1>$* Companion;
-}
-
-# Keep names for named companion object from obfuscation
-# Names of a class and of a field are important in lookup of named companion in runtime
--keepnames @kotlinx.serialization.internal.NamedCompanion class *
--if @kotlinx.serialization.internal.NamedCompanion class *
--keepclassmembernames class * {
-    static <1> *;
+    static <1>$Companion Companion;
 }
 
 # Keep `serializer()` on companion objects (both default and named) of serializable classes.
@@ -46,27 +38,4 @@
 # see https://github.com/Kotlin/kotlinx.serialization/issues/2719
 -keepclassmembers public class **$$serializer {
     private ** descriptor;
-}
-
--keepclassmembers class kotlinx.serialization.json.** {
-    *** Companion;
-}
--keepclasseswithmembers class kotlinx.serialization.json.** {
-    kotlinx.serialization.KSerializer serializer(...);
-}
--keepclasseswithmembers class .** {
-    kotlinx.serialization.KSerializer serializer(...);
-}
-
--keep,includedescriptorclasses class my.package.**$$serializer { *; }
-
--keep public class your.class.** {
-    public void set*(***);
-    public *** get*();
-}
-
--keep @kotlinx.serialization.Serializable class *
-
--keep class * {
- @kotlinx.serialization.SerialName <fields>;
 }

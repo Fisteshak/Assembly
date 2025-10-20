@@ -64,7 +64,7 @@ fun QrPrintElementRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                "Контейнер №$number",
+                "Контейнер $number",
                 color = MaterialTheme.colorScheme.primary,
                 style = MaterialTheme.typography.titleLarge.copy(fontSize = 18.sp)
             )

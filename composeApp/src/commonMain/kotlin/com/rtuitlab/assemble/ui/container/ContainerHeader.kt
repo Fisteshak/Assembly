@@ -44,7 +44,7 @@ fun ContainerHeader(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Контейнер № $number",
+                text = "Контейнер $number",
                 style = MaterialTheme.typography.displaySmall,
                 softWrap = false
             )
@@ -73,7 +73,7 @@ fun ContainerHeader(
         if (showNameDialog) {
             EditSingleLineStringDialog(
                 currentString = number,
-                label = "Контейнер №",
+                label = "Контейнер ",
                 onDismissRequest = { showNameDialog = false },
                 onConfirm = { onTitleChange(it); showNameDialog = false },
                 modifier = Modifier

@@ -55,7 +55,7 @@ kotlin {
                 }
             }
         }
-//        binaries.executable()
+        binaries.executable()
     }
 
     sourceSets {
@@ -92,9 +92,9 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.koin.compose)
             // audio player
-            implementation("eu.iamkonstantin.kotlin:gadulka:1.6.3")
+            implementation("eu.iamkonstantin.kotlin:gadulka:1.7.0")
             val fxSuffix = "win"
-            val fxVersion = "21"
+            val fxVersion = "23"
             implementation("org.openjfx:javafx-base:$fxVersion:${fxSuffix}")
             implementation("org.openjfx:javafx-graphics:$fxVersion:${fxSuffix}")
             implementation("org.openjfx:javafx-controls:$fxVersion:${fxSuffix}")
@@ -142,8 +142,11 @@ compose.desktop {
     application {
         mainClass = "com.rtuitlab.assemble.MainKt"
         buildTypes.release {
+
             proguard {
                 configurationFiles.from("compose-desktop.pro", "kotlinx.serialization.pro")
+                isEnabled.set(true)
+                obfuscate.set(true)
             }
         }
 

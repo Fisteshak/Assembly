@@ -65,7 +65,7 @@ fun ContainerCard(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "№${id}",
+                    text = "${id}",
 
                     style = MaterialTheme.typography.titleMedium,
                     color = contentColor
